@@ -1,0 +1,47 @@
+[
+  {
+    "id": "african-grey",
+    "slug": "african-grey",
+    "name": "African Grey",
+    "price": 15000,
+    "description": "ببغاء ذكي وملفت مع قدرة عالية على تقليد الأصوات وخلق علاقة قوية مع العائلة.",
+    "images": ["/birds/hero-parrot.jpeg", "/birds/macaw.jpg"],
+    "category": "ببغاء ذكي",
+    "badge": "مميز",
+    "ages": ["صغير (2-6 أشهر)", "شاب (6-12 شهر)", "بالغ (1+ سنوات)"],
+    "speakingLevels": ["قليل", "متوسط", "عالي"],
+    "featured": true,
+    "bestSeller": true,
+    "stockStatus": "Available",
+    "specs": ["العمر المتوقع: 40-60 سنة", "الحجم: متوسط", "الطبع: اجتماعي ومحب للتعلم"]
+  },
+  {
+    "id": "blue-macaw",
+    "slug": "blue-macaw",
+    "name": "Blue Macaw",
+    "price": 25000,
+    "description": "اختيار فاخر للمتحمسين الذين يبحثون عن ببغاء كبير ومشرق مع شخصية قوية.",
+    "images": ["/birds/macaw.jpg", "/birds/hero-parrot.jpeg"],
+    "category": "ببغاء كبير",
+    "badge": "حصري",
+    "ages": ["شاب (6-12 شهر)", "بالغ (1+ سنوات)"],
+    "speakingLevels": ["متوسط", "عالي"],
+    "featured": true,
+    "newArrival": true,
+    "stockStatus": "Available",
+    "specs": ["العمر المتوقع: 50-70 سنة", "الحجم: كبير", "الطبع: واثق ومميز"]
+  },
+  {
+    "id": "cockatoo",
+    "slug": "cockatoo",
+    "name": "Cockatoo",
+    "price": 20000,
+    "description": "ببغاء لطيف وودود يضيف دفئًا وبهجة إلى أي منزل مع اهتمام يومي مناسب.",
+    "images": ["/birds/hero-parrot.jpeg"],
+    "category": "ببغاء وديع",
+    "ages": ["بالغ (1+ سنوات)"],
+    "speakingLevels": ["قليل"],
+    "stockStatus": "Available",
+    "specs": ["العمر المتوقع: 35-50 سنة", "الحجم: متوسط-كبير", "الطبع: حنون وملفت"]
+  }
+]

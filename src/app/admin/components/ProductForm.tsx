@@ -1,9 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import {
+  ChangeEvent,
+  FormEvent,
+  useEffect,
+  useState,
+} from "react";
 import { useRouter } from "next/navigation";
 
-type ProductStatus = "available" | "sold" | "hidden";
+type ProductStatus =
+  | "available"
+  | "sold"
+  | "hidden";
 
 type Category = {
   id: string;
@@ -32,33 +40,40 @@ type Props = {
   initial?: Partial<ProductFormData>;
 };
 
-export default function ProductForm({ initial }: Props) {
+export default function ProductForm({
+  initial,
+}: Props) {
   const router = useRouter();
 
-  const [name, setName] = useState(initial?.name || "");
-  const [slug, setSlug] = useState(initial?.slug || "");
-  const [description, setDescription] = useState(
-    initial?.description || ""
+  const [name, setName] = useState(
+    initial?.name || ""
   );
 
-  const [category, setCategory] = useState(
-    initial?.category || ""
+  const [slug, setSlug] = useState(
+    initial?.slug || ""
   );
 
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [categoriesLoading, setCategoriesLoading] = useState(true);
+  const [description, setDescription] =
+    useState(initial?.description || "");
 
-  const [expectedAge, setExpectedAge] = useState(
-    initial?.expected_age || ""
-  );
+  const [category, setCategory] =
+    useState(initial?.category || "");
+
+  const [categories, setCategories] =
+    useState<Category[]>([]);
+
+  const [categoriesLoading, setCategoriesLoading] =
+    useState(true);
+
+  const [expectedAge, setExpectedAge] =
+    useState(initial?.expected_age || "");
 
   const [size, setSize] = useState(
     initial?.size || ""
   );
 
-  const [temperament, setTemperament] = useState(
-    initial?.temperament || ""
-  );
+  const [temperament, setTemperament] =
+    useState(initial?.temperament || "");
 
   const [price, setPrice] = useState(
     String(initial?.price ?? "")
@@ -72,28 +87,34 @@ export default function ProductForm({ initial }: Props) {
     initial?.video || ""
   );
 
-  const [status, setStatus] = useState<ProductStatus>(
-    initial?.status || "available"
-  );
+  const [status, setStatus] =
+    useState<ProductStatus>(
+      initial?.status || "available"
+    );
 
-  const [mainImage, setMainImage] = useState<File | null>(null);
+  const [mainImage, setMainImage] =
+    useState<File | null>(null);
 
-  const [additionalImages, setAdditionalImages] = useState<File[]>(
-    []
-  );
+  const [additionalImages, setAdditionalImages] =
+    useState<File[]>([]);
 
-  const [existingMainImage, setExistingMainImage] = useState(
-    initial?.main_image || ""
-  );
+  const [existingMainImage, setExistingMainImage] =
+    useState(initial?.main_image || "");
 
-  const [loading, setLoading] = useState(false);
+  const [mainImagePreview, setMainImagePreview] =
+    useState(initial?.main_image || "");
 
-  const [error, setError] = useState<string | null>(
-    null
-  );
+  const [additionalImagePreviews, setAdditionalImagePreviews] =
+    useState<string[]>([]);
+
+  const [loading, setLoading] =
+    useState(false);
+
+  const [error, setError] =
+    useState<string | null>(null);
 
   /*
-   * تحميل التصنيفات من قاعدة البيانات
+   * تحميل التصنيفات
    */
   useEffect(() => {
     const loadCategories = async () => {
@@ -105,18 +126,23 @@ export default function ProductForm({ initial }: Props) {
           {
             method: "GET",
             cache: "no-store",
+            credentials: "include",
           }
         );
 
-        const data = await response.json();
+        const data =
+          await response.json();
 
         if (!response.ok) {
           throw new Error(
-            data.error || "فشل تحميل التصنيفات"
+            data.error ||
+              "فشل تحميل التصنيفات"
           );
         }
 
-        setCategories(data.categories || []);
+        setCategories(
+          data.categories || []
+        );
       } catch (error) {
         console.error(
           "Failed to load categories:",
@@ -136,24 +162,103 @@ export default function ProductForm({ initial }: Props) {
     loadCategories();
   }, []);
 
+  /*
+   * تنظيف روابط Preview
+   */
+  useEffect(() => {
+    return () => {
+      if (
+        mainImagePreview &&
+        mainImagePreview.startsWith(
+          "blob:"
+        )
+      ) {
+        URL.revokeObjectURL(
+          mainImagePreview
+        );
+      }
+
+      additionalImagePreviews.forEach(
+        (preview) => {
+          if (
+            preview.startsWith("blob:")
+          ) {
+            URL.revokeObjectURL(preview);
+          }
+        }
+      );
+    };
+  }, [
+    mainImagePreview,
+    additionalImagePreviews,
+  ]);
+
+  /*
+   * الصورة الرئيسية
+   */
   const handleMainImage = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: ChangeEvent<HTMLInputElement>
   ) => {
-    const file = event.target.files?.[0] || null;
+    const file =
+      event.target.files?.[0] ||
+      null;
+
+    if (!file) {
+      return;
+    }
+
+    if (
+      mainImagePreview &&
+      mainImagePreview.startsWith("blob:")
+    ) {
+      URL.revokeObjectURL(
+        mainImagePreview
+      );
+    }
 
     setMainImage(file);
+
+    setMainImagePreview(
+      URL.createObjectURL(file)
+    );
   };
 
+  /*
+   * الصور الإضافية
+   */
   const handleAdditionalImages = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: ChangeEvent<HTMLInputElement>
   ) => {
     const files = Array.from(
       event.target.files || []
     );
 
+    if (!files.length) {
+      return;
+    }
+
+    additionalImagePreviews.forEach(
+      (preview) => {
+        if (
+          preview.startsWith("blob:")
+        ) {
+          URL.revokeObjectURL(preview);
+        }
+      }
+    );
+
     setAdditionalImages(files);
+
+    setAdditionalImagePreviews(
+      files.map((file) =>
+        URL.createObjectURL(file)
+      )
+    );
   };
 
+  /*
+   * إنشاء Slug تلقائي
+   */
   const generateSlug = () => {
     const generated = name
       .trim()
@@ -162,19 +267,31 @@ export default function ProductForm({ initial }: Props) {
       .replace(/\s+/g, "-")
       .replace(/--+/g, "-");
 
-    return generated || `product-${Date.now()}`;
+    return (
+      generated ||
+      `product-${Date.now()}`
+    );
   };
 
-  const uploadImage = async (file: File) => {
+  /*
+   * رفع صورة
+   */
+  const uploadImage = async (
+    file: File
+  ) => {
     const formData = new FormData();
 
-    formData.append("file", file);
+    formData.append(
+      "file",
+      file
+    );
 
     const response = await fetch(
       "/api/admin/products/upload",
       {
         method: "POST",
         body: formData,
+        credentials: "include",
       }
     );
 
@@ -184,7 +301,8 @@ export default function ProductForm({ initial }: Props) {
     } = {};
 
     try {
-      data = await response.json();
+      data =
+        await response.json();
     } catch {
       throw new Error(
         `فشل رفع الصورة. كود الخطأ: ${response.status}`
@@ -193,7 +311,8 @@ export default function ProductForm({ initial }: Props) {
 
     if (!response.ok) {
       throw new Error(
-        data.error || "فشل رفع الصورة"
+        data.error ||
+          "فشل رفع الصورة"
       );
     }
 
@@ -206,8 +325,11 @@ export default function ProductForm({ initial }: Props) {
     return data.url;
   };
 
+  /*
+   * حفظ المنتج
+   */
   const handleSubmit = async (
-    event: React.FormEvent<HTMLFormElement>
+    event: FormEvent<HTMLFormElement>
   ) => {
     event.preventDefault();
 
@@ -216,109 +338,147 @@ export default function ProductForm({ initial }: Props) {
 
     try {
       if (!name.trim()) {
-        throw new Error("اسم المنتج مطلوب");
+        throw new Error(
+          "اسم المنتج مطلوب"
+        );
       }
 
       if (!description.trim()) {
-        throw new Error("وصف المنتج مطلوب");
+        throw new Error(
+          "وصف المنتج مطلوب"
+        );
       }
 
       if (!category.trim()) {
-        throw new Error("التصنيف مطلوب");
+        throw new Error(
+          "التصنيف مطلوب"
+        );
       }
 
       if (!expectedAge.trim()) {
-        throw new Error("العمر المتوقع مطلوب");
+        throw new Error(
+          "العمر المتوقع مطلوب"
+        );
       }
 
       if (!size.trim()) {
-        throw new Error("الحجم مطلوب");
+        throw new Error(
+          "الحجم مطلوب"
+        );
       }
 
       if (!temperament.trim()) {
-        throw new Error("الطبع مطلوب");
+        throw new Error(
+          "الطبع مطلوب"
+        );
       }
 
-      const numericPrice = Number(price);
-      const numericQuantity = Number(quantity);
+      const numericPrice =
+        Number(price);
+
+      const numericQuantity =
+        Number(quantity);
 
       if (
-        !Number.isFinite(numericPrice) ||
+        !Number.isFinite(
+          numericPrice
+        ) ||
         numericPrice < 0
       ) {
-        throw new Error("السعر غير صحيح");
+        throw new Error(
+          "السعر غير صحيح"
+        );
       }
 
       if (
-        !Number.isFinite(numericQuantity) ||
+        !Number.isFinite(
+          numericQuantity
+        ) ||
         numericQuantity < 0
       ) {
-        throw new Error("الكمية غير صحيحة");
+        throw new Error(
+          "الكمية غير صحيحة"
+        );
       }
 
       /*
-       * في حالة التعديل:
-       * لو لم يتم اختيار صورة جديدة نحتفظ بالصورة الحالية.
+       * الصورة الحالية في حالة التعديل
        */
       let mainImageUrl =
-        existingMainImage || null;
+        existingMainImage ||
+        null;
 
       /*
-       * رفع الصورة الرئيسية الجديدة.
+       * رفع صورة رئيسية جديدة
        */
       if (mainImage) {
-        mainImageUrl = await uploadImage(mainImage);
+        mainImageUrl =
+          await uploadImage(
+            mainImage
+          );
       }
 
       /*
-       * رفع الصور الإضافية.
+       * رفع الصور الإضافية
        */
-      const additionalImageUrls: string[] = [];
+      const additionalImageUrls: string[] =
+        [];
 
-      for (const image of additionalImages) {
-        const url = await uploadImage(image);
+      for (
+        const image of additionalImages
+      ) {
+        const url =
+          await uploadImage(image);
 
-        additionalImageUrls.push(url);
+        additionalImageUrls.push(
+          url
+        );
       }
 
       /*
-       * ترتيب الصور:
-       * الصورة الرئيسية أولاً
-       * ثم الصور الإضافية
+       * ترتيب الصور
        */
       const images = [
-        ...(mainImageUrl ? [mainImageUrl] : []),
+        ...(mainImageUrl
+          ? [mainImageUrl]
+          : []),
         ...additionalImageUrls,
       ];
 
       /*
-       * عند الإضافة ننشئ ID جديد.
-       * عند التعديل نستخدم ID المنتج الموجود.
+       * ID المنتج
        */
       const productId =
-        initial?.id || crypto.randomUUID();
+        initial?.id ||
+        crypto.randomUUID();
 
+      /*
+       * Slug
+       */
       const productSlug =
-        slug.trim() || generateSlug();
+        slug.trim() ||
+        generateSlug();
 
       const body = {
         id: productId,
         name: name.trim(),
         slug: productSlug,
-        description: description.trim(),
-
-        /*
-         * نخزن slug التصنيف في products.category
-         */
+        description:
+          description.trim(),
         category: category.trim(),
-
-        expected_age: expectedAge.trim(),
+        expected_age:
+          expectedAge.trim(),
         size: size.trim(),
-        temperament: temperament.trim(),
+        temperament:
+          temperament.trim(),
         price: numericPrice,
-        quantity: numericQuantity,
-        main_image: mainImageUrl,
-        video: video.trim() || null,
+        quantity:
+          numericQuantity,
+        main_image:
+          mainImageUrl,
+        video:
+          video.trim() ||
+          null,
         status,
         images,
       };
@@ -333,13 +493,18 @@ export default function ProductForm({ initial }: Props) {
         ? "PUT"
         : "POST";
 
-      const response = await fetch(url, {
-        method,
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body),
-      });
+      const response =
+        await fetch(url, {
+          method,
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
+          credentials:
+            "include",
+          body:
+            JSON.stringify(body),
+        });
 
       let data: {
         success?: boolean;
@@ -348,7 +513,8 @@ export default function ProductForm({ initial }: Props) {
       } = {};
 
       try {
-        data = await response.json();
+        data =
+          await response.json();
       } catch {
         throw new Error(
           `الخادم لم يرجع استجابة صحيحة. كود الخطأ: ${response.status}`
@@ -362,7 +528,10 @@ export default function ProductForm({ initial }: Props) {
         );
       }
 
-      router.push("/admin/products");
+      router.push(
+        "/admin/products"
+      );
+
       router.refresh();
     } catch (error) {
       console.error(
@@ -384,72 +553,338 @@ export default function ProductForm({ initial }: Props) {
     <form
       onSubmit={handleSubmit}
       dir="rtl"
-      className="mt-8 max-w-4xl space-y-6"
+      className="mt-8 pb-16"
     >
+      {/* HEADER */}
+
+      <div className="mb-8 flex flex-col gap-5 border-b border-zinc-200 pb-6 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <div className="mb-2 flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() =>
+                router.push(
+                  "/admin/products"
+                )
+              }
+              className="flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-500 transition hover:bg-zinc-50 hover:text-zinc-950"
+            >
+              ←
+            </button>
+
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight text-zinc-950">
+                {initial?.id
+                  ? "تعديل المنتج"
+                  : "إضافة منتج جديد"}
+              </h1>
+
+              <p className="mt-1 text-sm text-zinc-500">
+                {initial?.id
+                  ? "عدّل بيانات المنتج والمعلومات الخاصة به."
+                  : "أضف منتجًا جديدًا إلى متجر نوادر الببغاوات."}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <button
+          type="submit"
+          disabled={
+            loading ||
+            categoriesLoading
+          }
+          className="inline-flex h-12 items-center justify-center rounded-2xl bg-zinc-950 px-7 text-sm font-bold text-white shadow-sm transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {loading
+            ? "جاري الحفظ..."
+            : initial?.id
+              ? "حفظ التعديلات"
+              : "حفظ المنتج"}
+        </button>
+      </div>
+
+      {/* ERROR */}
+
       {error && (
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-          {error}
+        <div
+          role="alert"
+          className="mb-6 flex items-start gap-3 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm leading-6 text-red-700"
+        >
+          <span className="text-lg">
+            !
+          </span>
+
+          <div>
+            <p className="font-bold">
+              حدث خطأ
+            </p>
+
+            <p className="mt-1">
+              {error}
+            </p>
+          </div>
         </div>
       )}
 
-      <div className="rounded-xl border border-zinc-200 bg-white p-6">
-        <h2 className="text-lg font-semibold text-zinc-900">
-          معلومات المنتج
-        </h2>
+      {/* MAIN GRID */}
 
-        <div className="mt-6 grid gap-5 md:grid-cols-2">
-          <div>
-            <label className="mb-2 block text-sm font-medium">
-              اسم المنتج
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
+        {/* MAIN COLUMN */}
+
+        <div className="space-y-6">
+          {/* BASIC INFO */}
+
+          <section className="rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm sm:p-8">
+            <div className="mb-7">
+              <h2 className="text-lg font-bold text-zinc-950">
+                معلومات المنتج
+              </h2>
+
+              <p className="mt-1 text-sm text-zinc-500">
+                المعلومات الأساسية التي ستظهر للعملاء.
+              </p>
+            </div>
+
+            <div className="grid gap-5 md:grid-cols-2">
+              {/* NAME */}
+
+              <div>
+                <label className="mb-2 block text-sm font-bold text-zinc-900">
+                  اسم المنتج
+                </label>
+
+                <input
+                  value={name}
+                  onChange={(e) =>
+                    setName(
+                      e.target.value
+                    )
+                  }
+                  placeholder="مثال: Blue Macaw"
+                  required
+                  className="h-12 w-full rounded-2xl border border-zinc-200 bg-white px-4 text-sm text-zinc-950 outline-none transition placeholder:text-zinc-400 focus:border-zinc-950 focus:ring-4 focus:ring-zinc-100"
+                />
+              </div>
+
+              {/* SLUG */}
+
+              <div>
+                <label className="mb-2 block text-sm font-bold text-zinc-900">
+                  الرابط المختصر
+                  <span className="mr-2 text-xs font-normal text-zinc-400">
+                    اختياري
+                  </span>
+                </label>
+
+                <input
+                  value={slug}
+                  onChange={(e) =>
+                    setSlug(
+                      e.target.value
+                    )
+                  }
+                  placeholder="blue-macaw"
+                  className="h-12 w-full rounded-2xl border border-zinc-200 bg-white px-4 text-sm text-zinc-950 outline-none transition placeholder:text-zinc-400 focus:border-zinc-950 focus:ring-4 focus:ring-zinc-100"
+                />
+
+                <p className="mt-2 text-xs text-zinc-400">
+                  سيتم إنشاؤه تلقائيًا إذا تركته فارغًا.
+                </p>
+              </div>
+
+              {/* DESCRIPTION */}
+
+              <div className="md:col-span-2">
+                <label className="mb-2 block text-sm font-bold text-zinc-900">
+                  وصف المنتج
+                </label>
+
+                <textarea
+                  value={description}
+                  onChange={(e) =>
+                    setDescription(
+                      e.target.value
+                    )
+                  }
+                  rows={6}
+                  required
+                  placeholder="اكتب وصفًا واضحًا ومميزًا للببغاء..."
+                  className="w-full resize-none rounded-2xl border border-zinc-200 bg-white p-4 text-sm leading-7 text-zinc-950 outline-none transition placeholder:text-zinc-400 focus:border-zinc-950 focus:ring-4 focus:ring-zinc-100"
+                />
+
+                <p className="mt-2 text-xs text-zinc-400">
+                  اكتب وصفًا يساعد العميل على معرفة تفاصيل المنتج.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          {/* PARROT DETAILS */}
+
+          <section className="rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm sm:p-8">
+            <div className="mb-7">
+              <h2 className="text-lg font-bold text-zinc-950">
+                تفاصيل الببغاء
+              </h2>
+
+              <p className="mt-1 text-sm text-zinc-500">
+                معلومات إضافية عن الببغاء لمساعدة العميل على اتخاذ القرار.
+              </p>
+            </div>
+
+            <div className="grid gap-5 md:grid-cols-2">
+              {/* AGE */}
+
+              <div>
+                <label className="mb-2 block text-sm font-bold text-zinc-900">
+                  العمر المتوقع
+                </label>
+
+                <input
+                  value={expectedAge}
+                  onChange={(e) =>
+                    setExpectedAge(
+                      e.target.value
+                    )
+                  }
+                  placeholder="مثال: 50 - 70 سنة"
+                  required
+                  className="h-12 w-full rounded-2xl border border-zinc-200 px-4 text-sm outline-none transition placeholder:text-zinc-400 focus:border-zinc-950 focus:ring-4 focus:ring-zinc-100"
+                />
+              </div>
+
+              {/* SIZE */}
+
+              <div>
+                <label className="mb-2 block text-sm font-bold text-zinc-900">
+                  الحجم
+                </label>
+
+                <input
+                  value={size}
+                  onChange={(e) =>
+                    setSize(
+                      e.target.value
+                    )
+                  }
+                  placeholder="مثال: كبير"
+                  required
+                  className="h-12 w-full rounded-2xl border border-zinc-200 px-4 text-sm outline-none transition placeholder:text-zinc-400 focus:border-zinc-950 focus:ring-4 focus:ring-zinc-100"
+                />
+              </div>
+
+              {/* TEMPERAMENT */}
+
+              <div className="md:col-span-2">
+                <label className="mb-2 block text-sm font-bold text-zinc-900">
+                  الطبع والشخصية
+                </label>
+
+                <input
+                  value={temperament}
+                  onChange={(e) =>
+                    setTemperament(
+                      e.target.value
+                    )
+                  }
+                  placeholder="مثال: ودود، ذكي، اجتماعي"
+                  required
+                  className="h-12 w-full rounded-2xl border border-zinc-200 px-4 text-sm outline-none transition placeholder:text-zinc-400 focus:border-zinc-950 focus:ring-4 focus:ring-zinc-100"
+                />
+              </div>
+            </div>
+          </section>
+        </div>
+
+        {/* SIDEBAR */}
+
+        <aside className="space-y-6">
+          {/* MAIN IMAGE */}
+
+          <section className="rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm">
+            <div className="mb-5">
+              <h2 className="font-bold text-zinc-950">
+                الصورة الرئيسية
+              </h2>
+
+              <p className="mt-1 text-xs text-zinc-500">
+                الصورة الأساسية التي ستظهر للمنتج.
+              </p>
+            </div>
+
+            <label className="group relative block cursor-pointer overflow-hidden rounded-2xl border-2 border-dashed border-zinc-200 bg-zinc-50 transition hover:border-zinc-400 hover:bg-zinc-100">
+              {mainImagePreview ? (
+                <div className="relative aspect-square">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={mainImagePreview}
+                    alt="معاينة المنتج"
+                    className="h-full w-full object-cover"
+                  />
+
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 transition group-hover:opacity-100">
+                    <span className="rounded-xl bg-white px-4 py-2 text-sm font-bold text-zinc-950">
+                      تغيير الصورة
+                    </span>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex aspect-square flex-col items-center justify-center p-6 text-center">
+                  <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-2xl shadow-sm">
+                    🦜
+                  </div>
+
+                  <p className="text-sm font-bold text-zinc-800">
+                    اختر الصورة الرئيسية
+                  </p>
+
+                  <p className="mt-2 text-xs text-zinc-400">
+                    JPG, PNG, WEBP
+                  </p>
+                </div>
+              )}
+
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp,image/gif"
+                onChange={
+                  handleMainImage
+                }
+                required={
+                  !existingMainImage
+                }
+                className="hidden"
+              />
             </label>
 
-            <input
-              value={name}
-              onChange={(e) =>
-                setName(e.target.value)
-              }
-              placeholder="مثال: Blue Macaw"
-              required
-              className="w-full rounded-lg border border-zinc-200 px-4 py-3 outline-none shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
-            />
-          </div>
+            {mainImage && (
+              <p className="mt-3 truncate text-xs text-emerald-600">
+                تم اختيار:{" "}
+                {mainImage.name}
+              </p>
+            )}
+          </section>
 
-          <div>
-            <label className="mb-2 block text-sm font-medium">
-              الرابط المختصر
-              <span className="mr-2 text-xs text-zinc-400">
-                اختياري
-              </span>
-            </label>
+          {/* CATEGORY */}
 
-            <input
-              value={slug}
-              onChange={(e) =>
-                setSlug(e.target.value)
-              }
-              placeholder="blue-macaw"
-              className="w-full rounded-lg border border-zinc-200 px-4 py-3 outline-none shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
-            />
-
-            <p className="mt-1 text-xs text-zinc-400">
-              إذا تركته فارغًا سيتم إنشاؤه تلقائيًا من اسم المنتج.
-            </p>
-          </div>
-
-          {/* التصنيف من قاعدة البيانات */}
-          <div>
-            <label className="mb-2 block text-sm font-medium">
+          <section className="rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm">
+            <label className="mb-2 block text-sm font-bold text-zinc-900">
               التصنيف
             </label>
 
             <select
               value={category}
               onChange={(e) =>
-                setCategory(e.target.value)
+                setCategory(
+                  e.target.value
+                )
               }
               required
-              disabled={categoriesLoading}
-              className="w-full rounded-lg border border-zinc-200 bg-white px-4 py-3 outline-none shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 disabled:cursor-not-allowed disabled:bg-zinc-50"
+              disabled={
+                categoriesLoading
+              }
+              className="h-12 w-full rounded-2xl border border-zinc-200 bg-white px-4 text-sm text-zinc-950 outline-none transition focus:border-zinc-950 focus:ring-4 focus:ring-zinc-100 disabled:cursor-not-allowed disabled:bg-zinc-50"
             >
               <option value="">
                 {categoriesLoading
@@ -457,260 +892,226 @@ export default function ProductForm({ initial }: Props) {
                   : "اختر التصنيف"}
               </option>
 
-              {categories.map((item) => (
-                <option
-                  key={item.id}
-                  value={item.slug}
-                >
-                  {item.name}
-                </option>
-              ))}
+              {categories.map(
+                (item) => (
+                  <option
+                    key={item.id}
+                    value={item.slug}
+                  >
+                    {item.name}
+                  </option>
+                )
+              )}
             </select>
 
             {!categoriesLoading &&
-              categories.length === 0 && (
-                <p className="mt-2 text-xs text-amber-600">
+              categories.length ===
+                0 && (
+                <p className="mt-3 rounded-xl bg-amber-50 p-3 text-xs leading-5 text-amber-700">
                   لا توجد تصنيفات. أضف تصنيفًا من لوحة التحكم أولًا.
                 </p>
               )}
-          </div>
+          </section>
 
-          <div className="md:col-span-2">
-            <label className="mb-2 block text-sm font-medium">
-              وصف المنتج
-            </label>
+          {/* PRICE + QUANTITY */}
 
-            <textarea
-              value={description}
-              onChange={(e) =>
-                setDescription(e.target.value)
-              }
-              rows={5}
-              required
-              className="w-full rounded-lg border border-zinc-200 p-4 outline-none shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
-            />
-          </div>
+          <section className="rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm">
+            <h2 className="mb-5 font-bold text-zinc-950">
+              السعر والمخزون
+            </h2>
 
-          <div>
-            <label className="mb-2 block text-sm font-medium">
-              العمر المتوقع
-            </label>
+            <div className="space-y-5">
+              <div>
+                <label className="mb-2 block text-sm font-bold text-zinc-900">
+                  السعر
+                </label>
 
-            <input
-              value={expectedAge}
-              onChange={(e) =>
-                setExpectedAge(e.target.value)
-              }
-              placeholder="مثال: 50-70 سنة"
-              required
-              className="w-full rounded-lg border border-zinc-200 px-4 py-3 outline-none shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
-            />
-          </div>
+                <div className="relative">
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={price}
+                    onChange={(e) =>
+                      setPrice(
+                        e.target.value
+                      )
+                    }
+                    required
+                    className="h-12 w-full rounded-2xl border border-zinc-200 px-4 pl-14 text-sm outline-none transition focus:border-zinc-950 focus:ring-4 focus:ring-zinc-100"
+                  />
 
-          <div>
-            <label className="mb-2 block text-sm font-medium">
-              الحجم
-            </label>
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xs font-bold text-zinc-400">
+                    EGP
+                  </span>
+                </div>
+              </div>
 
-            <input
-              value={size}
-              onChange={(e) =>
-                setSize(e.target.value)
-              }
-              placeholder="مثال: كبير"
-              required
-              className="w-full rounded-lg border border-zinc-200 px-4 py-3 outline-none shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
-            />
-          </div>
+              <div>
+                <label className="mb-2 block text-sm font-bold text-zinc-900">
+                  الكمية
+                </label>
 
-          <div>
-            <label className="mb-2 block text-sm font-medium">
-              الطبع
-            </label>
-
-            <input
-              value={temperament}
-              onChange={(e) =>
-                setTemperament(e.target.value)
-              }
-              placeholder="مثال: ودود ومميز"
-              required
-              className="w-full rounded-lg border border-zinc-200 px-4 py-3 outline-none shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
-            />
-          </div>
-
-          <div>
-            <label className="mb-2 block text-sm font-medium">
-              السعر بالجنيه
-            </label>
-
-            <input
-              type="number"
-              min="0"
-              step="0.01"
-              value={price}
-              onChange={(e) =>
-                setPrice(e.target.value)
-              }
-              required
-              className="w-full rounded-lg border border-zinc-200 px-4 py-3 outline-none shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
-            />
-          </div>
-
-          <div>
-            <label className="mb-2 block text-sm font-medium">
-              الكمية
-            </label>
-
-            <input
-              type="number"
-              min="0"
-              step="1"
-              value={quantity}
-              onChange={(e) =>
-                setQuantity(e.target.value)
-              }
-              required
-              className="w-full rounded-lg border border-zinc-200 px-4 py-3 outline-none shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
-            />
-          </div>
-
-          <div>
-            <label className="mb-2 block text-sm font-medium">
-              حالة المنتج
-            </label>
-
-            <select
-              value={status}
-              onChange={(e) =>
-                setStatus(
-                  e.target.value as ProductStatus
-                )
-              }
-              className="w-full rounded-lg border border-zinc-200 bg-white px-4 py-3 outline-none shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
-            >
-              <option value="available">
-                متاح
-              </option>
-
-              <option value="sold">
-                مباع
-              </option>
-
-              <option value="hidden">
-                مخفي
-              </option>
-            </select>
-          </div>
-
-          <div>
-            <label className="mb-2 block text-sm font-medium">
-              الفيديو
-              <span className="mr-2 text-xs text-zinc-400">
-                اختياري
-              </span>
-            </label>
-
-            <input
-              value={video}
-              onChange={(e) =>
-                setVideo(e.target.value)
-              }
-              placeholder="رابط الفيديو"
-              className="w-full rounded-lg border border-zinc-200 px-4 py-3 outline-none shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
-            />
-          </div>
-        </div>
-      </div>
-
-      <div className="rounded-xl border border-zinc-200 bg-white p-6">
-        <h2 className="text-lg font-semibold text-zinc-900">
-          صور المنتج
-        </h2>
-
-        <div className="mt-6 space-y-5">
-          <div>
-            <label className="mb-2 block text-sm font-medium">
-              الصورة الرئيسية
-            </label>
-
-            <input
-              type="file"
-              accept="image/jpeg,image/png,image/webp,image/gif"
-              onChange={handleMainImage}
-              className="block w-full text-sm"
-              required={!existingMainImage}
-            />
-
-            {existingMainImage && (
-              <div className="mt-3">
-                <p className="text-xs text-zinc-500">
-                  توجد صورة رئيسية حالية. يمكنك رفع صورة جديدة لاستبدالها.
-                </p>
-
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={existingMainImage}
-                  alt="الصورة الرئيسية الحالية"
-                  className="mt-3 h-32 w-32 rounded-lg object-cover"
+                <input
+                  type="number"
+                  min="0"
+                  step="1"
+                  value={quantity}
+                  onChange={(e) =>
+                    setQuantity(
+                      e.target.value
+                    )
+                  }
+                  required
+                  className="h-12 w-full rounded-2xl border border-zinc-200 px-4 text-sm outline-none transition focus:border-zinc-950 focus:ring-4 focus:ring-zinc-100"
                 />
               </div>
-            )}
 
-            {mainImage && (
-              <p className="mt-2 text-xs text-emerald-600">
-                الصورة الجديدة: {mainImage.name}
-              </p>
-            )}
-          </div>
+              <div>
+                <label className="mb-2 block text-sm font-bold text-zinc-900">
+                  حالة المنتج
+                </label>
 
-          <div>
-            <label className="mb-2 block text-sm font-medium">
-              صور إضافية
-              <span className="mr-2 text-xs text-zinc-400">
-                اختياري
-              </span>
-            </label>
+                <select
+                  value={status}
+                  onChange={(e) =>
+                    setStatus(
+                      e.target.value as ProductStatus
+                    )
+                  }
+                  className="h-12 w-full rounded-2xl border border-zinc-200 bg-white px-4 text-sm outline-none transition focus:border-zinc-950 focus:ring-4 focus:ring-zinc-100"
+                >
+                  <option value="available">
+                    متاح
+                  </option>
 
-            <input
-              type="file"
-              accept="image/jpeg,image/png,image/webp,image/gif"
-              multiple
-              onChange={handleAdditionalImages}
-              className="block w-full text-sm"
-            />
+                  <option value="sold">
+                    مباع
+                  </option>
 
-            {additionalImages.length > 0 && (
-              <p className="mt-2 text-xs text-zinc-500">
-                تم اختيار {additionalImages.length} صورة
-              </p>
-            )}
-          </div>
-        </div>
+                  <option value="hidden">
+                    مخفي
+                  </option>
+                </select>
+              </div>
+            </div>
+          </section>
+        </aside>
       </div>
 
-      <div className="flex gap-3">
+      {/* ADDITIONAL IMAGES */}
+
+      <section className="mt-6 rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm sm:p-8">
+        <div className="mb-6">
+          <h2 className="text-lg font-bold text-zinc-950">
+            صور إضافية
+          </h2>
+
+          <p className="mt-1 text-sm text-zinc-500">
+            يمكنك إضافة صور أخرى لعرض المنتج من زوايا مختلفة.
+          </p>
+        </div>
+
+        <label className="flex min-h-32 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-zinc-200 bg-zinc-50 p-6 text-center transition hover:border-zinc-400 hover:bg-zinc-100">
+          <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-white text-xl shadow-sm">
+            +
+          </div>
+
+          <p className="text-sm font-bold text-zinc-800">
+            إضافة صور
+          </p>
+
+          <p className="mt-1 text-xs text-zinc-400">
+            يمكنك اختيار أكثر من صورة
+          </p>
+
+          <input
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/gif"
+            multiple
+            onChange={
+              handleAdditionalImages
+            }
+            className="hidden"
+          />
+        </label>
+
+        {additionalImages.length >
+          0 && (
+          <div className="mt-5 grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-6">
+            {additionalImagePreviews.map(
+              (preview, index) => (
+                <div
+                  key={preview}
+                  className="relative aspect-square overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-100"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={preview}
+                    alt={`صورة إضافية ${index + 1}`}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+              )
+            )}
+          </div>
+        )}
+      </section>
+
+      {/* VIDEO */}
+
+      <section className="mt-6 rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm sm:p-8">
+        <div className="mb-5">
+          <h2 className="text-lg font-bold text-zinc-950">
+            فيديو المنتج
+          </h2>
+
+          <p className="mt-1 text-sm text-zinc-500">
+            أضف رابط فيديو للمنتج إذا كان متاحًا.
+          </p>
+        </div>
+
+        <input
+          value={video}
+          onChange={(e) =>
+            setVideo(
+              e.target.value
+            )
+          }
+          placeholder="https://youtube.com/..."
+          className="h-12 w-full rounded-2xl border border-zinc-200 px-4 text-sm outline-none transition placeholder:text-zinc-400 focus:border-zinc-950 focus:ring-4 focus:ring-zinc-100"
+        />
+      </section>
+
+      {/* BOTTOM ACTIONS */}
+
+      <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+        <button
+          type="button"
+          onClick={() =>
+            router.push(
+              "/admin/products"
+            )
+          }
+          disabled={loading}
+          className="h-12 rounded-2xl border border-zinc-200 bg-white px-7 text-sm font-bold text-zinc-700 transition hover:bg-zinc-50 disabled:opacity-50"
+        >
+          إلغاء
+        </button>
+
         <button
           type="submit"
-          disabled={loading || categoriesLoading}
-          className="rounded-xl bg-emerald-600 px-6 py-3 font-semibold text-white shadow-sm transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"
+          disabled={
+            loading ||
+            categoriesLoading
+          }
+          className="h-12 rounded-2xl bg-zinc-950 px-8 text-sm font-bold text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {loading
             ? "جاري الحفظ..."
             : initial?.id
               ? "حفظ التعديلات"
               : "إضافة المنتج"}
-        </button>
-
-        <button
-          type="button"
-          onClick={() =>
-            router.push("/admin/products")
-          }
-          disabled={loading}
-          className="rounded-lg border border-zinc-200 bg-white px-6 py-3 font-semibold text-zinc-700"
-        >
-          إلغاء
         </button>
       </div>
     </form>

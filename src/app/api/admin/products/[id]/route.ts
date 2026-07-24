@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import {
   assertSupabaseConfigured,
   supabaseAdmin,
-} from "@/lib/supabase/server";
+} from "@/lib/supabase/admin";
 
 type RouteContext = {
   params: Promise<{

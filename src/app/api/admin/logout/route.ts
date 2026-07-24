@@ -1,17 +1,25 @@
 import { NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
 
-export async function POST(request: Request) {
-  const response = NextResponse.redirect(
-    new URL("/admin/login", request.url)
-  );
+export async function POST() {
+  try {
+    const supabase = await createClient();
 
-  response.cookies.set("admin_access_token", "", {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    path: "/",
-    expires: new Date(0),
-  });
+    await supabase.auth.signOut();
 
-  return response;
+    return NextResponse.json({
+      success: true,
+    });
+  } catch (error) {
+    console.error("Admin logout error:", error);
+
+    return NextResponse.json(
+      {
+        error: "فشل تسجيل الخروج",
+      },
+      {
+        status: 500,
+      }
+    );
+  }
 }

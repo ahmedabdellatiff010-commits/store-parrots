@@ -3,7 +3,7 @@ import Link from "next/link";
 import {
   supabaseAdmin,
   assertSupabaseConfigured,
-} from "@/lib/supabase/server";
+} from "@/lib/supabase/admin";
 
 type Category = {
   id: string;

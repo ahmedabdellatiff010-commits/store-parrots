@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import {
   assertSupabaseConfigured,
   supabaseAdmin,
-} from "@/lib/supabase/server";
+} from "@/lib/supabase/admin";
 
 import { getProductsByCategory } from "@/app/lib/products";
 import ProductGrid from "@/app/components/ProductGrid";

@@ -3,7 +3,7 @@ import ProductForm from "../../../components/ProductForm";
 import {
   assertSupabaseConfigured,
   supabaseAdmin,
-} from "@/lib/supabase/server";
+} from "@/lib/supabase/admin";
 
 type Props = {
   params: Promise<{

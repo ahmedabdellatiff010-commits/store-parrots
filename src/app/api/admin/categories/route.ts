@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import {
   assertSupabaseConfigured,
   supabaseAdmin,
-} from "@/lib/supabase/server";
+} from "@/lib/supabase/admin";
 
 const BUCKET_NAME = "product-images";
 
@@ -12,24 +12,35 @@ export async function GET() {
 
     const { data, error } = await supabaseAdmin!
       .from("categories")
-.select("id, name, slug, image, created_at")
+      .select("id, name, slug, image, created_at")
       .order("created_at", {
         ascending: false,
       });
 
     if (error) {
+      console.error("Failed to load categories:", error);
+
       return NextResponse.json(
         {
           error: error.message,
         },
-        { status: 500 }
+        {
+          status: 500,
+        }
       );
     }
 
-    return NextResponse.json({
-      categories: data || [],
-    });
+    return NextResponse.json(
+      {
+        categories: data || [],
+      },
+      {
+        status: 200,
+      }
+    );
   } catch (error) {
+    console.error("Categories GET error:", error);
+
     return NextResponse.json(
       {
         error:
@@ -37,7 +48,9 @@ export async function GET() {
             ? error.message
             : "فشل تحميل التصنيفات",
       },
-      { status: 500 }
+      {
+        status: 500,
+      }
     );
   }
 }
@@ -58,7 +71,6 @@ export async function POST(request: Request) {
       .trim()
       .toLowerCase();
 
-    // basic slug sanitization: replace spaces with hyphens, remove invalid chars
     slug = slug
       .replace(/\s+/g, "-")
       .replace(/[^a-z0-9\-]/g, "")
@@ -73,7 +85,9 @@ export async function POST(request: Request) {
           error:
             "اسم التصنيف والـ slug مطلوبان",
         },
-        { status: 400 }
+        {
+          status: 400,
+        }
       );
     }
 
@@ -84,20 +98,31 @@ export async function POST(request: Request) {
     ) {
       return NextResponse.json(
         {
-          error:
-            "صورة التصنيف مطلوبة",
+          error: "صورة التصنيف مطلوبة",
         },
-        { status: 400 }
+        {
+          status: 400,
+        }
       );
     }
 
-    // التأكد أن الـ slug غير مستخدم
-    const { data: existingCategory } =
+    const { data: existingCategory, error: existingError } =
       await supabaseAdmin!
         .from("categories")
         .select("id")
         .eq("slug", slug)
         .maybeSingle();
+
+    if (existingError) {
+      return NextResponse.json(
+        {
+          error: existingError.message,
+        },
+        {
+          status: 500,
+        }
+      );
+    }
 
     if (existingCategory) {
       return NextResponse.json(
@@ -105,11 +130,12 @@ export async function POST(request: Request) {
           error:
             "هذا الـ slug مستخدم بالفعل. اختر slug مختلف.",
         },
-        { status: 409 }
+        {
+          status: 409,
+        }
       );
     }
 
-    // تجهيز اسم الصورة
     const extension =
       imageFile.name
         .split(".")
@@ -118,20 +144,17 @@ export async function POST(request: Request) {
 
     const fileName = `categories/${crypto.randomUUID()}.${extension}`;
 
-    // تحويل الصورة
     const arrayBuffer =
       await imageFile.arrayBuffer();
 
     const buffer = Buffer.from(arrayBuffer);
 
-    // رفع الصورة إلى Supabase Storage
     const { error: uploadError } =
       await supabaseAdmin!.storage
         .from(BUCKET_NAME)
         .upload(fileName, buffer, {
           contentType:
-            imageFile.type ||
-            "image/jpeg",
+            imageFile.type || "image/jpeg",
           upsert: false,
         });
 
@@ -147,34 +170,34 @@ export async function POST(request: Request) {
             uploadError.message ||
             "فشل رفع صورة التصنيف",
         },
-        { status: 500 }
+        {
+          status: 500,
+        }
       );
     }
 
-    // الحصول على رابط الصورة
     const {
       data: publicUrlData,
-    } =
-      supabaseAdmin!.storage
-        .from(BUCKET_NAME)
-        .getPublicUrl(fileName);
+    } = supabaseAdmin!.storage
+      .from(BUCKET_NAME)
+      .getPublicUrl(fileName);
 
     const imageUrl =
       publicUrlData.publicUrl;
 
-    // إنشاء التصنيف
-    const { data, error } =
-      await supabaseAdmin!
-        .from("categories")
-        .insert({
-          name,
-          slug,
-          image: imageUrl,
-        })
-        .select()
-        .single();
+    const {
+      data,
+      error,
+    } = await supabaseAdmin!
+      .from("categories")
+      .insert({
+        name,
+        slug,
+        image: imageUrl,
+      })
+      .select()
+      .single();
 
-    // لو حصل خطأ نحذف الصورة التي تم رفعها
     if (error) {
       await supabaseAdmin!.storage
         .from(BUCKET_NAME)
@@ -189,7 +212,9 @@ export async function POST(request: Request) {
         {
           error: error.message,
         },
-        { status: 500 }
+        {
+          status: 500,
+        }
       );
     }
 
@@ -198,7 +223,9 @@ export async function POST(request: Request) {
         success: true,
         category: data,
       },
-      { status: 201 }
+      {
+        status: 201,
+      }
     );
   } catch (error) {
     console.error(
@@ -213,7 +240,9 @@ export async function POST(request: Request) {
             ? error.message
             : "حدث خطأ أثناء إضافة التصنيف",
       },
-      { status: 500 }
+      {
+        status: 500,
+      }
     );
   }
 }

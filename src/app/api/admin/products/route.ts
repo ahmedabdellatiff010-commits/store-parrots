@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { assertSupabaseConfigured, supabaseAdmin } from "@/lib/supabase/server";
+import { assertSupabaseConfigured, supabaseAdmin } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
 
 type ProductPayload = {
   id?: string;
@@ -18,8 +19,12 @@ type ProductPayload = {
   images?: string[];
 };
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
     assertSupabaseConfigured();
 
     const { data, error } = await supabaseAdmin!
@@ -72,6 +77,10 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
+    const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
     assertSupabaseConfigured();
 
     const body = (await req.json()) as ProductPayload;
@@ -182,6 +191,10 @@ export async function POST(req: Request) {
 
 export async function PATCH(req: Request) {
   try {
+    const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
     assertSupabaseConfigured();
 
     const body = (await req.json()) as ProductPayload;
@@ -323,6 +336,10 @@ export async function PATCH(req: Request) {
 
 export async function DELETE(req: Request) {
   try {
+    const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
 

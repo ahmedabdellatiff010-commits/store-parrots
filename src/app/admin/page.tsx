@@ -11,7 +11,7 @@ type Product = {
 export default async function AdminDashboardPage() {
   assertSupabaseConfigured();
 
-  const { data: products, error } = await supabaseAdmin\!
+const { data: products, error } = await supabaseAdmin!
     .from("products")
     .select("status, quantity");
 

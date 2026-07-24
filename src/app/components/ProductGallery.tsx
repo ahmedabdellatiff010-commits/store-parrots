@@ -11,34 +11,67 @@ type Props = {
 export default function ProductGallery({ images }: Props) {
   const [index, setIndex] = useState(0);
 
-  return (
-    <div>
-      <div className="relative overflow-hidden rounded-lg border border-zinc-200 bg-white shadow-sm">
-        <div className="relative aspect-[4/3] w-full">
-          <Image src={images[index]} alt={`صورة المنتج ${index + 1}`} fill className="object-cover transition-opacity duration-300" />
-        </div>
+  const validImages = images?.filter(Boolean) ?? [];
 
-        <div className="absolute top-3 left-3">
+  if (validImages.length === 0) {
+    return (
+      <div className="flex aspect-square w-full items-center justify-center bg-zinc-100">
+        <span className="text-sm text-zinc-400">
+          لا توجد صورة للمنتج
+        </span>
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-full">
+      {/* Main Image */}
+      <div className="relative aspect-square w-full overflow-hidden bg-zinc-100 sm:aspect-[4/3]">
+        <Image
+          key={validImages[index]}
+          src={validImages[index]}
+          alt={`صورة ${index + 1} من ${validImages.length} لـ ${"المنتج"}`}
+          fill
+          priority={index === 0}
+          sizes="(max-width: 1024px) 100vw, 55vw"
+          className="object-cover transition-opacity duration-300"
+        />
+
+        {/* Favorite */}
+        <div className="absolute right-4 top-4 z-10">
           <FavoriteButton />
         </div>
       </div>
 
-      <div className="mt-3 -mx-2 overflow-x-auto px-2">
-        <div className="flex gap-3">
-          {images.map((src, i) => (
-            <button
-              key={src}
-              type="button"
-              onClick={() => setIndex(i)}
-              aria-label={`عرض الصورة ${i + 1}`}
-              className={`relative shrink-0 overflow-hidden rounded-md border ${index === i ? "border-zinc-900" : "border-zinc-200"} focus:outline-none`}
-              style={{ width: 92, height: 64 }}
-            >
-              <Image src={src} alt={`thumb ${i + 1}`} fill className="object-cover" />
-            </button>
-          ))}
+      {/* Thumbnails */}
+      {validImages.length > 1 && (
+        <div className="mt-3 overflow-x-auto">
+          <div className="flex gap-2">
+            {validImages.map((src, i) => (
+              <button
+                key={`${src}-${i}`}
+                type="button"
+                onClick={() => setIndex(i)}
+                aria-label={`عرض الصورة ${i + 1}`}
+                aria-current={index === i}
+                className={`relative h-[72px] w-[72px] shrink-0 overflow-hidden border transition-colors duration-200 ${
+                  index === i
+                    ? "border-zinc-900"
+                    : "border-transparent hover:border-zinc-300"
+                }`}
+              >
+                <Image
+                  src={src}
+                  alt=""
+                  fill
+                  sizes="72px"
+                  className="object-cover"
+                />
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

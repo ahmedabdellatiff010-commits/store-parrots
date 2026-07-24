@@ -1,27 +1,126 @@
 export default function ReviewsSection() {
   const reviews = [
-    { name: "محمد", location: "الجيزة", text: "أنصح الجميع بالتعامل معهم، احترافية عالية." },
-    { name: "سارة", location: "الإسكندرية", text: "الببغاء جميل جداً والتوصيل سريع وآمن." },
-    { name: "أحمد", location: "القاهرة", text: "تجربة رائعة ومصداقية في البيع، الببغاء سليم ويتكلم بالفعل." },
+    {
+      name: "محمد",
+      location: "الجيزة",
+      rating: 5,
+      text: "أنصح الجميع بالتعامل معهم، احترافية عالية وتعامل محترم جدًا من أول التواصل لحد استلام الببغاء.",
+    },
+    {
+      name: "سارة",
+      location: "الإسكندرية",
+      rating: 5,
+      text: "الببغاء جميل جدًا والتوصيل كان سريع وآمن. تجربة ممتازة وهتعامل معاهم مرة تانية.",
+    },
+    {
+      name: "أحمد",
+      location: "القاهرة",
+      rating: 5,
+      text: "تجربة رائعة ومصداقية في البيع. الببغاء وصل بحالة ممتازة وكل التفاصيل كانت واضحة.",
+    },
   ];
 
   return (
-    <section dir="rtl" className="space-y-6">
-      <h3 className="text-xl font-semibold text-zinc-900">آراء عملائنا</h3>
+    <section dir="rtl" className="w-full">
+      {/* Section Header */}
+      <div className="flex flex-col gap-6 border-b border-zinc-200 pb-8 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="text-xs font-medium tracking-[0.18em] text-zinc-400">
+            آراء العملاء
+          </p>
 
-      <div className="grid gap-4 md:grid-cols-3">
-        {reviews.map((r, i) => (
-          <div key={i} className="rounded-lg border border-zinc-100 bg-white p-4 shadow-sm">
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 shrink-0 overflow-hidden rounded-full bg-zinc-100" />
-              <div>
-                <div className="text-sm font-semibold text-zinc-900">{r.name}</div>
-                <div className="text-xs text-zinc-500">{r.location}</div>
-              </div>
+          <h3 className="mt-3 text-2xl font-medium tracking-[-0.025em] text-zinc-950 sm:text-3xl">
+            تجارب عملائنا
+          </h3>
+
+          <p className="mt-3 max-w-lg text-sm leading-7 text-zinc-500">
+            رضا عملائنا هو أهم جزء في تجربتنا. تعرف على تجارب بعض العملاء
+            الذين اختاروا ببغاواتهم من نوادر الببغاوات.
+          </p>
+        </div>
+
+        {/* Overall Rating */}
+        <div className="flex shrink-0 items-center gap-4">
+          <div className="flex items-center gap-1">
+            {[1, 2, 3, 4, 5].map((star) => (
+              <span
+                key={star}
+                className="text-sm text-zinc-900"
+                aria-hidden="true"
+              >
+                ★
+              </span>
+            ))}
+          </div>
+
+          <div className="h-8 w-px bg-zinc-200" />
+
+          <div>
+            <p className="text-sm font-medium text-zinc-900">
+              5.0 من 5
+            </p>
+
+            <p className="mt-0.5 text-xs text-zinc-400">
+              تقييم العملاء
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Reviews */}
+      <div className="grid gap-0 md:grid-cols-3">
+        {reviews.map((review, index) => (
+          <article
+            key={`${review.name}-${index}`}
+            className={`py-8 md:px-7 ${
+              index !== reviews.length - 1
+                ? "border-b border-zinc-200 md:border-b-0 md:border-l"
+                : ""
+            } ${
+              index === 0
+                ? "md:pr-0"
+                : ""
+            } ${
+              index === reviews.length - 1
+                ? "md:pl-0"
+                : ""
+            }`}
+          >
+            {/* Stars */}
+            <div className="flex items-center gap-1">
+              {Array.from({ length: review.rating }).map((_, starIndex) => (
+                <span
+                  key={starIndex}
+                  className="text-xs text-zinc-900"
+                  aria-hidden="true"
+                >
+                  ★
+                </span>
+              ))}
             </div>
 
-            <p className="mt-3 text-sm text-zinc-700">{r.text}</p>
-          </div>
+            {/* Review */}
+            <p className="mt-5 text-sm leading-7 text-zinc-600">
+              “{review.text}”
+            </p>
+
+            {/* Customer */}
+            <div className="mt-6 flex items-center gap-3">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-zinc-100 text-xs font-medium text-zinc-700">
+                {review.name.charAt(0)}
+              </div>
+
+              <div>
+                <p className="text-sm font-medium text-zinc-900">
+                  {review.name}
+                </p>
+
+                <p className="mt-0.5 text-xs text-zinc-400">
+                  {review.location}
+                </p>
+              </div>
+            </div>
+          </article>
         ))}
       </div>
     </section>

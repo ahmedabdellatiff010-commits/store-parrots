@@ -6,59 +6,79 @@ type ProductCardProps = {
   product: Product;
 };
 
-export default function ProductCard({ product }: ProductCardProps) {
+export default function ProductCard({
+  product,
+}: ProductCardProps) {
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-lg border border-zinc-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
-      <div className="relative aspect-[4/3] overflow-hidden bg-zinc-100">
-        <Image
-          src={product.images[0]}
-          alt={product.name}
-          fill
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          className="object-cover transition-transform duration-700 group-hover:scale-105"
-        />
-      </div>
-
-      <div className="flex flex-1 flex-col p-6">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <p className="text-[11px] font-semibold uppercase text-zinc-500">
-              {product.expectedAge ? `العمر: ${product.expectedAge}` : "العمر غير محدد"}
-            </p>
-            <h3 className="mt-2 text-xl font-semibold text-zinc-900">{product.name}</h3>
-            <p className="mt-2 text-sm text-zinc-500">
-              {product.size ? `الحجم: ${product.size}` : "الحجم غير محدد"}
-            </p>
-          </div>
-
-          {product.temperament ? (
-            <span className="rounded-full border border-zinc-200 px-3 py-1 text-xs font-medium text-zinc-600">
-              {product.temperament}
+    <article className="group w-full">
+      {/* Product Image */}
+      <Link
+        href={`/products/${product.slug}`}
+        className="relative block aspect-[4/4.6] overflow-hidden bg-zinc-100"
+        aria-label={`عرض ${product.name}`}
+      >
+        {product.images?.[0] ? (
+          <Image
+            src={product.images[0]}
+            alt={product.name}
+            fill
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 20vw"
+            className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+          />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center bg-zinc-100">
+            <span className="text-[10px] text-zinc-400">
+              لا توجد صورة
             </span>
-          ) : null}
-        </div>
+          </div>
+        )}
+      </Link>
 
-        <p className="mt-4 text-sm leading-7 text-zinc-600">{product.description}</p>
+      {/* Product Info */}
+      <div className="pt-3">
+        {/* Name + Price */}
+        <div className="flex items-start justify-between gap-2">
+          <div className="min-w-0">
+            <Link href={`/products/${product.slug}`}>
+              <h3 className="truncate text-[13px] font-medium leading-5 text-zinc-900 transition-colors group-hover:text-zinc-500">
+                {product.name}
+              </h3>
+            </Link>
 
-        <div className="mt-6 flex items-center justify-between">
-          <div>
-            <p className="text-[11px] font-semibold uppercase  text-zinc-500">
-              السعر
-            </p>
-            <p className="mt-1 text-lg font-semibold text-zinc-900">
-              {product.price.toLocaleString("en-EG")} جنيه
-            </p>
+            {product.temperament && (
+              <p className="mt-0.5 truncate text-[10px] text-zinc-500">
+                {product.temperament}
+              </p>
+            )}
           </div>
 
-         
+          <span
+            dir="ltr"
+            className="shrink-0 text-[12px] font-medium text-zinc-900"
+          >
+            {product.price.toLocaleString("en-EG")} ج
+          </span>
         </div>
 
+        {/* Small Meta */}
+        {(product.expectedAge || product.size) && (
+          <div className="mt-2 flex items-center gap-3 text-[9px] text-zinc-400">
+            {product.expectedAge && (
+              <span>العمر {product.expectedAge}</span>
+            )}
+
+            {product.size && (
+              <span>الحجم {product.size}</span>
+            )}
+          </div>
+        )}
+
+        {/* Details */}
         <Link
           href={`/products/${product.slug}`}
-          className="mt-6 inline-flex items-center justify-center gap-3 rounded-md border border-zinc-300 bg-zinc-900 px-4 py-3 text-sm font-semibold text-white transition-colors duration-200 hover:bg-[var(--primary-hover)]"
+          className="mt-3 flex h-9 w-full items-center justify-center border border-zinc-200 text-[10px] font-medium text-zinc-800 transition-all duration-200 hover:border-zinc-900 hover:bg-zinc-900 hover:text-white"
         >
-          <span>عرض التفاصيل</span>
-          <span aria-hidden>→</span>
+          عرض التفاصيل
         </Link>
       </div>
     </article>

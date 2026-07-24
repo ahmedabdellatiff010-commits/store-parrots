@@ -1,9 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 type ProductStatus = "available" | "sold" | "hidden";
+
+type Category = {
+  id: string;
+  name: string;
+  slug: string;
+};
 
 type ProductFormData = {
   id?: string;
@@ -38,6 +44,9 @@ export default function ProductForm({ initial }: Props) {
   const [category, setCategory] = useState(
     initial?.category || ""
   );
+
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
 
   const [expectedAge, setExpectedAge] = useState(
     initial?.expected_age || ""
@@ -82,6 +91,50 @@ export default function ProductForm({ initial }: Props) {
   const [error, setError] = useState<string | null>(
     null
   );
+
+  /*
+   * تحميل التصنيفات من قاعدة البيانات
+   */
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        setCategoriesLoading(true);
+
+        const response = await fetch(
+          "/api/admin/categories",
+          {
+            method: "GET",
+            cache: "no-store",
+          }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(
+            data.error || "فشل تحميل التصنيفات"
+          );
+        }
+
+        setCategories(data.categories || []);
+      } catch (error) {
+        console.error(
+          "Failed to load categories:",
+          error
+        );
+
+        setError(
+          error instanceof Error
+            ? error.message
+            : "فشل تحميل التصنيفات"
+        );
+      } finally {
+        setCategoriesLoading(false);
+      }
+    };
+
+    loadCategories();
+  }, []);
 
   const handleMainImage = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -189,7 +242,10 @@ export default function ProductForm({ initial }: Props) {
       const numericPrice = Number(price);
       const numericQuantity = Number(quantity);
 
-      if (!Number.isFinite(numericPrice) || numericPrice < 0) {
+      if (
+        !Number.isFinite(numericPrice) ||
+        numericPrice < 0
+      ) {
         throw new Error("السعر غير صحيح");
       }
 
@@ -250,7 +306,12 @@ export default function ProductForm({ initial }: Props) {
         name: name.trim(),
         slug: productSlug,
         description: description.trim(),
+
+        /*
+         * نخزن slug التصنيف في products.category
+         */
         category: category.trim(),
+
         expected_age: expectedAge.trim(),
         size: size.trim(),
         temperament: temperament.trim(),
@@ -263,7 +324,9 @@ export default function ProductForm({ initial }: Props) {
       };
 
       const url = initial?.id
-        ? `/api/admin/products/${encodeURIComponent(initial.id)}`
+        ? `/api/admin/products/${encodeURIComponent(
+            initial.id
+          )}`
         : "/api/admin/products";
 
       const method = initial?.id
@@ -347,7 +410,7 @@ export default function ProductForm({ initial }: Props) {
               }
               placeholder="مثال: Blue Macaw"
               required
-              className="w-full rounded-lg border border-zinc-200 px-4 py-3 outline-none focus:border-emerald-500 shadow-sm focus:ring-2 focus:ring-emerald-200"
+              className="w-full rounded-lg border border-zinc-200 px-4 py-3 outline-none shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
             />
           </div>
 
@@ -365,7 +428,7 @@ export default function ProductForm({ initial }: Props) {
                 setSlug(e.target.value)
               }
               placeholder="blue-macaw"
-              className="w-full rounded-lg border border-zinc-200 px-4 py-3 outline-none focus:border-emerald-500 shadow-sm focus:ring-2 focus:ring-emerald-200"
+              className="w-full rounded-lg border border-zinc-200 px-4 py-3 outline-none shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
             />
 
             <p className="mt-1 text-xs text-zinc-400">
@@ -373,20 +436,43 @@ export default function ProductForm({ initial }: Props) {
             </p>
           </div>
 
+          {/* التصنيف من قاعدة البيانات */}
           <div>
             <label className="mb-2 block text-sm font-medium">
               التصنيف
             </label>
 
-            <input
+            <select
               value={category}
               onChange={(e) =>
                 setCategory(e.target.value)
               }
-              placeholder="مثال: ببغاء كبير"
               required
-              className="w-full rounded-lg border border-zinc-200 px-4 py-3 outline-none focus:border-emerald-500"
-            />
+              disabled={categoriesLoading}
+              className="w-full rounded-lg border border-zinc-200 bg-white px-4 py-3 outline-none shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 disabled:cursor-not-allowed disabled:bg-zinc-50"
+            >
+              <option value="">
+                {categoriesLoading
+                  ? "جاري تحميل التصنيفات..."
+                  : "اختر التصنيف"}
+              </option>
+
+              {categories.map((item) => (
+                <option
+                  key={item.id}
+                  value={item.slug}
+                >
+                  {item.name}
+                </option>
+              ))}
+            </select>
+
+            {!categoriesLoading &&
+              categories.length === 0 && (
+                <p className="mt-2 text-xs text-amber-600">
+                  لا توجد تصنيفات. أضف تصنيفًا من لوحة التحكم أولًا.
+                </p>
+              )}
           </div>
 
           <div className="md:col-span-2">
@@ -401,7 +487,7 @@ export default function ProductForm({ initial }: Props) {
               }
               rows={5}
               required
-              className="w-full rounded-lg border border-zinc-200 p-4 outline-none focus:border-emerald-500 shadow-sm focus:ring-2 focus:ring-emerald-200"
+              className="w-full rounded-lg border border-zinc-200 p-4 outline-none shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
             />
           </div>
 
@@ -417,7 +503,7 @@ export default function ProductForm({ initial }: Props) {
               }
               placeholder="مثال: 50-70 سنة"
               required
-              className="w-full rounded-lg border border-zinc-200 px-4 py-3 outline-none focus:border-emerald-500 shadow-sm focus:ring-2 focus:ring-emerald-200"
+              className="w-full rounded-lg border border-zinc-200 px-4 py-3 outline-none shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
             />
           </div>
 
@@ -433,7 +519,7 @@ export default function ProductForm({ initial }: Props) {
               }
               placeholder="مثال: كبير"
               required
-              className="w-full rounded-lg border border-zinc-200 px-4 py-3 outline-none focus:border-emerald-500 shadow-sm focus:ring-2 focus:ring-emerald-200"
+              className="w-full rounded-lg border border-zinc-200 px-4 py-3 outline-none shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
             />
           </div>
 
@@ -449,7 +535,7 @@ export default function ProductForm({ initial }: Props) {
               }
               placeholder="مثال: ودود ومميز"
               required
-              className="w-full rounded-lg border border-zinc-200 px-4 py-3 outline-none focus:border-emerald-500 shadow-sm focus:ring-2 focus:ring-emerald-200"
+              className="w-full rounded-lg border border-zinc-200 px-4 py-3 outline-none shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
             />
           </div>
 
@@ -467,7 +553,7 @@ export default function ProductForm({ initial }: Props) {
                 setPrice(e.target.value)
               }
               required
-              className="w-full rounded-lg border border-zinc-200 px-4 py-3 outline-none focus:border-emerald-500 shadow-sm focus:ring-2 focus:ring-emerald-200"
+              className="w-full rounded-lg border border-zinc-200 px-4 py-3 outline-none shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
             />
           </div>
 
@@ -485,7 +571,7 @@ export default function ProductForm({ initial }: Props) {
                 setQuantity(e.target.value)
               }
               required
-              className="w-full rounded-lg border border-zinc-200 px-4 py-3 outline-none focus:border-emerald-500 shadow-sm focus:ring-2 focus:ring-emerald-200"
+              className="w-full rounded-lg border border-zinc-200 px-4 py-3 outline-none shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
             />
           </div>
 
@@ -501,7 +587,7 @@ export default function ProductForm({ initial }: Props) {
                   e.target.value as ProductStatus
                 )
               }
-              className="w-full rounded-lg border border-zinc-200 bg-white px-4 py-3 outline-none focus:border-emerald-500 shadow-sm focus:ring-2 focus:ring-emerald-200"
+              className="w-full rounded-lg border border-zinc-200 bg-white px-4 py-3 outline-none shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
             >
               <option value="available">
                 متاح
@@ -531,7 +617,7 @@ export default function ProductForm({ initial }: Props) {
                 setVideo(e.target.value)
               }
               placeholder="رابط الفيديو"
-              className="w-full rounded-lg border border-zinc-200 px-4 py-3 outline-none focus:border-emerald-500 shadow-sm focus:ring-2 focus:ring-emerald-200"
+              className="w-full rounded-lg border border-zinc-200 px-4 py-3 outline-none shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
             />
           </div>
         </div>
@@ -606,8 +692,8 @@ export default function ProductForm({ initial }: Props) {
       <div className="flex gap-3">
         <button
           type="submit"
-          disabled={loading}
-          className="rounded-xl bg-emerald-600 px-6 py-3 font-semibold text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50 shadow-sm"
+          disabled={loading || categoriesLoading}
+          className="rounded-xl bg-emerald-600 px-6 py-3 font-semibold text-white shadow-sm transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {loading
             ? "جاري الحفظ..."
@@ -622,7 +708,7 @@ export default function ProductForm({ initial }: Props) {
             router.push("/admin/products")
           }
           disabled={loading}
-          className="rounded-lg border border-zinc-200 px-6 py-3 font-semibold text-zinc-700 bg-white"
+          className="rounded-lg border border-zinc-200 bg-white px-6 py-3 font-semibold text-zinc-700"
         >
           إلغاء
         </button>

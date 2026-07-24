@@ -13,24 +13,32 @@ export default function ProductDetails({
   product,
 }: ProductDetailsProps) {
   return (
-    <div dir="rtl" className="mx-auto max-w-7xl">
-      <div className="grid gap-8 lg:grid-cols-[1fr_0.9fr] lg:items-start">
-        <div>
-          <ProductGallery images={product.images} />
+    <main dir="rtl" className="w-full bg-white">
+      {/* Product */}
+      <section className="mx-auto max-w-[1200px] px-4 py-8 sm:px-6 sm:py-12 lg:px-8 lg:py-16">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-12">
+          {/* Product Media */}
+          <div className="min-w-0">
+            <ProductGallery images={product.images} />
 
-          <div className="mt-6">
-            <ProductVideo product={product} />
+            <div className="mt-8">
+              <ProductVideo product={product} />
+            </div>
+          </div>
+
+          {/* Product Information */}
+          <div className="min-w-0">
+            <ProductInfo product={product} />
           </div>
         </div>
+      </section>
 
-        <div className="relative z-10">
-          <ProductInfo product={product} />
+      {/* Reviews */}
+      <section className="border-t border-zinc-200">
+        <div className="mx-auto max-w-[1200px] px-4 py-12 sm:px-6 lg:px-8">
+          <ReviewsSection />
         </div>
-      </div>
-
-      <div className="mt-12">
-        <ReviewsSection />
-      </div>
-    </div>
+      </section>
+    </main>
   );
 }

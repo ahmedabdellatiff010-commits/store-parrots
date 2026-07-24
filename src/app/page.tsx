@@ -14,6 +14,8 @@ export default async function Home() {
       <Navbar />
       <Hero />
 
+      <CategoriesSection />
+
       <section id="featured" className="mx-auto max-w-7xl px-6 py-20 md:px-8 lg:px-10">
         <div className="mb-10 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
           <div>
@@ -32,8 +34,6 @@ export default async function Home() {
 
         <ProductGrid />
       </section>
-
-      <CategoriesSection />
 
       <section id="cta" className="mx-auto max-w-7xl px-6 pb-20 md:px-8 lg:px-10">
         <div className="rounded-[32px] border border-zinc-200 bg-zinc-950 p-8 text-white md:p-12">

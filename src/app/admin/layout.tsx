@@ -53,13 +53,24 @@ export default function AdminLayout({
 
           <Link
             href="/admin/products"
-            className="flex items-center gap-3 rounded-xl bg-zinc-950 px-3 py-3 text-sm font-semibold text-white shadow-sm"
+            className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium text-zinc-600 transition hover:bg-zinc-100 hover:text-zinc-950"
           >
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/10">
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-zinc-100">
               ◈
             </span>
 
             المنتجات
+          </Link>
+
+          <Link
+            href="/admin/categories"
+            className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium text-zinc-600 transition hover:bg-zinc-100 hover:text-zinc-950"
+          >
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-zinc-100">
+              ⊞
+            </span>
+
+            التصنيفات
           </Link>
         </nav>
 
@@ -126,9 +137,16 @@ export default function AdminLayout({
 
           <Link
             href="/admin/products"
-            className="rounded-lg bg-zinc-950 px-3 py-2 text-xs font-semibold text-white"
+            className="rounded-lg px-3 py-2 text-xs font-medium text-zinc-600 hover:bg-zinc-100"
           >
             المنتجات
+          </Link>
+
+          <Link
+            href="/admin/categories"
+            className="rounded-lg px-3 py-2 text-xs font-medium text-zinc-600 hover:bg-zinc-100"
+          >
+            التصنيفات
           </Link>
         </div>
       </header>

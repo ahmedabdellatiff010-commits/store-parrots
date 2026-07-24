@@ -6,6 +6,7 @@ type ProductPayload = {
   slug?: string;
   name?: string;
   description?: string;
+  category?: string;
   expected_age?: string;
   size?: string;
   temperament?: string;
@@ -80,6 +81,7 @@ export async function POST(req: Request) {
       slug,
       name,
       description,
+      category,
       expected_age,
       size,
       temperament,
@@ -108,6 +110,7 @@ export async function POST(req: Request) {
           slug,
           name,
           description: description || "",
+          category: category?.trim() || "",
           expected_age: expected_age || "",
           size: size || "",
           temperament: temperament || "",
@@ -188,6 +191,7 @@ export async function PATCH(req: Request) {
       slug,
       name,
       description,
+      category,
       expected_age,
       size,
       temperament,
@@ -224,6 +228,7 @@ export async function PATCH(req: Request) {
       ...(slug !== undefined && { slug }),
       ...(name !== undefined && { name }),
       ...(description !== undefined && { description }),
+      ...(category !== undefined && { category: String(category).trim() }),
       ...(expected_age !== undefined && {
         expected_age,
       }),

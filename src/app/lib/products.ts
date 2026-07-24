@@ -119,5 +119,52 @@ export async function getProductBySlug(
   return mapProduct(data as SupabaseProduct);
 }
 
+export async function getProductsByCategory(
+  slug: string,
+  limit = 100
+): Promise<Product[]> {
+  const cleanSlug = decodeURIComponent(slug).trim();
+
+  const { data, error } = await supabaseAdmin!
+    .from("products")
+    .select(`
+      id,
+      slug,
+      name,
+      description,
+      expected_age,
+      size,
+      temperament,
+      price,
+      quantity,
+      main_image,
+      video,
+      status,
+      category,
+      product_images (
+        id,
+        image_url,
+        sort_order
+      )
+    `)
+    .eq("status", "available")
+    .eq("category", cleanSlug)
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (error) {
+    console.error(
+      "Failed to fetch products by category:",
+      error
+    );
+
+    return [];
+  }
+
+  return (data || []).map((product) =>
+    mapProduct(product as SupabaseProduct)
+  );
+}
+
 export const WHATSAPP_PHONE_NUMBER =
   process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "";

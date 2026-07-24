@@ -11,125 +11,164 @@ type Props = {
 export default function ProductInfo({ product }: Props) {
   const [quantity, setQuantity] = useState(1);
 
-  const totalPrice = useMemo(
-    () => product.price * quantity,
-    [product.price, quantity]
-  );
+  const maxQuantity = Math.max(1, product.quantity || 1);
+
+  const totalPrice = useMemo(() => {
+    return product.price * quantity;
+  }, [product.price, quantity]);
 
   const changeQty = (delta: number) => {
-  setQuantity((current) =>
-    Math.min(
-      Math.max(1, current + delta),
-      Math.max(1, product.quantity)
-    )
-  );
-};
+    setQuantity((current) =>
+      Math.min(
+        Math.max(1, current + delta),
+        maxQuantity
+      )
+    );
+  };
 
   const infoRows = [
     product.expectedAge
-      ? { label: "العمر المتوقع", value: product.expectedAge }
+      ? {
+          label: "العمر",
+          value: product.expectedAge,
+        }
       : null,
+
     product.size
-      ? { label: "الحجم", value: product.size }
+      ? {
+          label: "الحجم",
+          value: product.size,
+        }
       : null,
+
     product.temperament
-      ? { label: "الطبع", value: product.temperament }
+      ? {
+          label: "الطبع",
+          value: product.temperament,
+        }
       : null,
-  ].filter(Boolean) as { label: string; value: string }[];
+  ].filter(Boolean) as {
+    label: string;
+    value: string;
+  }[];
 
   return (
-    <div className="rounded-[20px] border border-zinc-200 bg-white p-6 shadow-sm">
-      <h2 className="text-2xl font-semibold text-zinc-900">
-        {product.name}
-      </h2>
+    <div className="w-full">
+      {/* Product Title */}
+      <div>
+        <p className="text-xs font-medium text-zinc-500">
+          ببغاء مميز
+        </p>
 
-      <p className="mt-1 text-sm text-zinc-500">
-        #{`P-${product.id}`}
-      </p>
+        <h1 className="mt-2 text-2xl font-medium tracking-[-0.02em] text-zinc-950 sm:text-3xl">
+          {product.name}
+        </h1>
 
-      <p className="mt-4 text-base leading-7 text-zinc-600">
-        {product.description}
-      </p>
+        <p className="mt-2 text-xs text-zinc-400">
+          رقم المنتج: P-{product.id}
+        </p>
+      </div>
 
+      {/* Price */}
+      <div className="mt-6">
+        <p
+          dir="ltr"
+          className="text-2xl font-medium tracking-[-0.02em] text-zinc-950"
+        >
+          {product.price.toLocaleString("en-EG")} ج.م
+        </p>
+      </div>
+
+      {/* Description */}
+      {product.description && (
+        <div className="mt-6 border-t border-zinc-200 pt-6">
+          <p className="text-sm leading-7 text-zinc-600">
+            {product.description}
+          </p>
+        </div>
+      )}
+
+      {/* Product Details */}
       {infoRows.length > 0 && (
-        <div className="mt-6 divide-y divide-zinc-100 rounded-md border border-zinc-100">
+        <div className="mt-6 border-y border-zinc-200">
           {infoRows.map((row) => (
             <div
               key={row.label}
-              className="flex items-center justify-between gap-4 px-4 py-3"
+              className="flex min-h-[52px] items-center justify-between gap-6 border-b border-zinc-100 last:border-b-0"
             >
-              <div className="text-sm text-zinc-600">
+              <span className="text-sm text-zinc-500">
                 {row.label}
-              </div>
+              </span>
 
-              <div className="text-sm font-semibold text-zinc-900">
+              <span className="text-sm font-medium text-zinc-900">
                 {row.value}
-              </div>
+              </span>
             </div>
           ))}
         </div>
       )}
 
-      <div className="mt-6 border-t border-zinc-100 pt-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-xs font-semibold text-zinc-500">
-              السعر
-            </p>
+      {/* Quantity */}
+      <div className="mt-6">
+        <label className="text-sm font-medium text-zinc-900">
+          الكمية
+        </label>
 
-            <p className="mt-1 text-2xl font-bold text-emerald-600">
-              {product.price.toLocaleString("en-EG")} ج.م
-            </p>
-          </div>
+        <div className="mt-3 inline-flex h-11 items-center border border-zinc-300">
+          <button
+            type="button"
+            aria-label="تقليل الكمية"
+            onClick={() => changeQty(-1)}
+            disabled={quantity <= 1}
+            className="flex h-full w-11 items-center justify-center text-lg text-zinc-600 transition-colors hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-30"
+          >
+            −
+          </button>
 
-          <div>
-            <p className="text-xs text-zinc-500">
-              الكمية
-            </p>
+          <span className="flex h-full w-12 items-center justify-center border-x border-zinc-300 text-sm font-medium text-zinc-900">
+            {quantity}
+          </span>
 
-         <div className="mt-2 flex items-center gap-2">
-  <button
-    type="button"
-    aria-label="تقليل الكمية"
-    onClick={() => changeQty(-1)}
-    className="relative z-10 flex h-10 w-10 touch-manipulation items-center justify-center rounded-full border border-zinc-200 bg-white text-lg font-semibold text-zinc-700 transition hover:bg-zinc-50 active:scale-95"
-  >
-    −
-  </button>
-
-  <div className="flex h-10 min-w-[40px] items-center justify-center text-center font-semibold text-zinc-900">
-    {quantity}
-  </div>
-
-  <button
-    type="button"
-    aria-label="زيادة الكمية"
-    onClick={() => changeQty(1)}
-    className="relative z-10 flex h-10 w-10 touch-manipulation items-center justify-center rounded-full border border-zinc-200 bg-white text-lg font-semibold text-zinc-700 transition hover:bg-zinc-50 active:scale-95"
-  >
-    +
-  </button>
-</div>
-          </div>
-        </div>
-
-        <div className="mt-6">
-          <div className="mb-2 text-sm text-zinc-600">
-            الإجمالي:
-            <span className="font-semibold text-zinc-900">
-              {" "}
-              {totalPrice.toLocaleString("en-EG")} ج.م
-            </span>
-          </div>
-
-          <WhatsAppButton
-            product={product}
-            quantity={quantity}
-            label="اطلب الآن عبر واتساب"
-            className="w-full"
-          />
+          <button
+            type="button"
+            aria-label="زيادة الكمية"
+            onClick={() => changeQty(1)}
+            disabled={quantity >= maxQuantity}
+            className="flex h-full w-11 items-center justify-center text-lg text-zinc-600 transition-colors hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-30"
+          >
+            +
+          </button>
         </div>
       </div>
+
+      {/* Order Summary */}
+      <div className="mt-6 flex items-center justify-between border-t border-zinc-200 pt-5">
+        <span className="text-sm text-zinc-500">
+          الإجمالي
+        </span>
+
+        <span
+          dir="ltr"
+          className="text-base font-medium text-zinc-950"
+        >
+          {totalPrice.toLocaleString("en-EG")} ج.م
+        </span>
+      </div>
+
+      {/* WhatsApp CTA */}
+      <div className="mt-5">
+        <WhatsAppButton
+          product={product}
+          quantity={quantity}
+          label="اطلب الآن عبر واتساب"
+          className="h-12 w-full"
+        />
+      </div>
+
+      {/* Trust Message */}
+      <p className="mt-4 text-center text-xs leading-5 text-zinc-400">
+        تواصل معنا عبر واتساب لتأكيد الطلب ومعرفة التفاصيل.
+      </p>
     </div>
   );
 }

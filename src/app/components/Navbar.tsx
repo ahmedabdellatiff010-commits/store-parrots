@@ -221,9 +221,6 @@ export default function Navbar() {
                       {link.label}
                     </span>
 
-                    <span className="mt-1 block truncate text-xs text-white/30 transition-colors duration-300 group-hover:text-white/50">
-                      {link.description}
-                    </span>
                   </div>
                 </div>
 

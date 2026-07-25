@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
-import { assertSupabaseConfigured, supabaseAdmin } from "@/lib/supabase/admin";
+import {
+  assertSupabaseConfigured,
+  supabaseAdmin,
+} from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
 type ProductPayload = {
@@ -19,38 +22,57 @@ type ProductPayload = {
   images?: string[];
 };
 
-export async function GET(request: Request) {
+async function getAuthenticatedUser() {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  return user;
+}
+
+export async function GET() {
   try {
-    const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const user = await getAuthenticatedUser();
+
+    if (!user) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
 
     assertSupabaseConfigured();
 
-    const { data, error } = await supabaseAdmin!
-      .from("products")
-      .select(`
-        id,
-        slug,
-        name,
-        description,
-        expected_age,
-        size,
-        temperament,
-        price,
-        quantity,
-        main_image,
-        video,
-        status,
-        created_at,
-        updated_at,
-        product_images (
+    const { data, error } =
+      await supabaseAdmin!
+        .from("products")
+        .select(`
           id,
-          image_url,
-          sort_order
-        )
-      `)
-      .order("created_at", { ascending: false });
+          slug,
+          name,
+          description,
+          category,
+          expected_age,
+          size,
+          temperament,
+          price,
+          quantity,
+          main_image,
+          video,
+          status,
+          created_at,
+          updated_at,
+          product_images (
+            id,
+            image_url,
+            sort_order
+          )
+        `)
+        .order("created_at", {
+          ascending: false,
+        });
 
     if (error) {
       return NextResponse.json(
@@ -75,15 +97,24 @@ export async function GET(request: Request) {
   }
 }
 
-export async function POST(req: Request) {
+export async function POST(
+  req: Request
+) {
   try {
-    const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const user =
+      await getAuthenticatedUser();
+
+    if (!user) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
 
     assertSupabaseConfigured();
 
-    const body = (await req.json()) as ProductPayload;
+    const body =
+      (await req.json()) as ProductPayload;
 
     const {
       id,
@@ -105,53 +136,82 @@ export async function POST(req: Request) {
     if (!id || !slug || !name) {
       return NextResponse.json(
         {
-          error: "id, slug and name are required",
+          error:
+            "id, slug and name are required",
         },
         { status: 400 }
       );
     }
 
-    const { data: product, error: productError } =
+    const {
+      data: product,
+      error: productError,
+    } =
       await supabaseAdmin!
         .from("products")
         .insert({
           id,
           slug,
           name,
-          description: description || "",
-          category: category?.trim() || "",
-          expected_age: expected_age || "",
+          description:
+            description || "",
+          category:
+            category?.trim() || "",
+          expected_age:
+            expected_age || "",
           size: size || "",
-          temperament: temperament || "",
-          price: Number(price) || 0,
-          quantity: Math.max(0, Number(quantity) || 0),
+          temperament:
+            temperament || "",
+          price:
+            Number(price) || 0,
+          quantity: Math.max(
+            0,
+            Number(quantity) || 0
+          ),
           main_image:
             main_image ||
-            (Array.isArray(images) ? images[0] : null) ||
+            (Array.isArray(images)
+              ? images[0]
+              : null) ||
             null,
-          video: video || null,
-          status: status || "available",
+          video:
+            video || null,
+          status:
+            status || "available",
         })
         .select()
         .single();
 
     if (productError) {
       return NextResponse.json(
-        { error: productError.message },
+        {
+          error:
+            productError.message,
+        },
         { status: 400 }
       );
     }
 
-    if (Array.isArray(images) && images.length > 0) {
-      const imageRows = images.map(
-        (image_url: string, index: number) => ({
-          product_id: product.id,
-          image_url,
-          sort_order: index,
-        })
-      );
+    if (
+      Array.isArray(images) &&
+      images.length > 0
+    ) {
+      const imageRows =
+        images.map(
+          (
+            image_url: string,
+            index: number
+          ) => ({
+            product_id:
+              product.id,
+            image_url,
+            sort_order: index,
+          })
+        );
 
-      const { error: imagesError } =
+      const {
+        error: imagesError,
+      } =
         await supabaseAdmin!
           .from("product_images")
           .insert(imageRows);
@@ -160,10 +220,16 @@ export async function POST(req: Request) {
         await supabaseAdmin!
           .from("products")
           .delete()
-          .eq("id", product.id);
+          .eq(
+            "id",
+            product.id
+          );
 
         return NextResponse.json(
-          { error: imagesError.message },
+          {
+            error:
+              imagesError.message,
+          },
           { status: 400 }
         );
       }
@@ -189,15 +255,24 @@ export async function POST(req: Request) {
   }
 }
 
-export async function PATCH(req: Request) {
+export async function PATCH(
+  req: Request
+) {
   try {
-    const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const user =
+      await getAuthenticatedUser();
+
+    if (!user) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
 
     assertSupabaseConfigured();
 
-    const body = (await req.json()) as ProductPayload;
+    const body =
+      (await req.json()) as ProductPayload;
 
     const {
       id,
@@ -218,54 +293,104 @@ export async function PATCH(req: Request) {
 
     if (!id) {
       return NextResponse.json(
-        { error: "Product id is required" },
+        {
+          error:
+            "Product id is required",
+        },
         { status: 400 }
       );
     }
 
-    const { data: existingProduct, error: existingError } =
+    const {
+      data: existingProduct,
+      error: existingError,
+    } =
       await supabaseAdmin!
         .from("products")
         .select("id")
         .eq("id", id)
         .single();
 
-    if (existingError || !existingProduct) {
+    if (
+      existingError ||
+      !existingProduct
+    ) {
       return NextResponse.json(
-        { error: "Product not found" },
+        {
+          error:
+            "Product not found",
+        },
         { status: 404 }
       );
     }
 
     const updateData = {
-      ...(slug !== undefined && { slug }),
-      ...(name !== undefined && { name }),
-      ...(description !== undefined && { description }),
-      ...(category !== undefined && { category: String(category).trim() }),
-      ...(expected_age !== undefined && {
+      ...(slug !== undefined && {
+        slug,
+      }),
+
+      ...(name !== undefined && {
+        name,
+      }),
+
+      ...(description !==
+        undefined && {
+        description,
+      }),
+
+      ...(category !== undefined && {
+        category:
+          String(category).trim(),
+      }),
+
+      ...(expected_age !==
+        undefined && {
         expected_age,
       }),
-      ...(size !== undefined && { size }),
-      ...(temperament !== undefined && {
+
+      ...(size !== undefined && {
+        size,
+      }),
+
+      ...(temperament !==
+        undefined && {
         temperament,
       }),
+
       ...(price !== undefined && {
-        price: Number(price) || 0,
+        price:
+          Number(price) || 0,
       }),
+
       ...(quantity !== undefined && {
-        quantity: Math.max(0, Number(quantity) || 0),
+        quantity: Math.max(
+          0,
+          Number(quantity) || 0
+        ),
       }),
-      ...(main_image !== undefined && {
+
+      ...(main_image !==
+        undefined && {
         main_image,
       }),
+
       ...(video !== undefined && {
-        video: video || null,
+        video:
+          video || null,
       }),
-      ...(status !== undefined && { status }),
-      updated_at: new Date().toISOString(),
+
+      ...(status !== undefined && {
+        status,
+      }),
+
+      updated_at:
+        new Date().toISOString(),
     };
 
-    const { data: product, error: productError } =
+    const {
+      data: product,
+      error: productError,
+    } =
       await supabaseAdmin!
         .from("products")
         .update(updateData)
@@ -275,42 +400,67 @@ export async function PATCH(req: Request) {
 
     if (productError) {
       return NextResponse.json(
-        { error: productError.message },
+        {
+          error:
+            productError.message,
+        },
         { status: 400 }
       );
     }
 
     if (Array.isArray(images)) {
-      const { error: deleteImagesError } =
+      const {
+        error: deleteImagesError,
+      } =
         await supabaseAdmin!
           .from("product_images")
           .delete()
-          .eq("product_id", id);
+          .eq(
+            "product_id",
+            id
+          );
 
       if (deleteImagesError) {
         return NextResponse.json(
-          { error: deleteImagesError.message },
+          {
+            error:
+              deleteImagesError.message,
+          },
           { status: 400 }
         );
       }
 
       if (images.length > 0) {
-        const imageRows = images.map(
-          (image_url: string, index: number) => ({
-            product_id: id,
-            image_url,
-            sort_order: index,
-          })
-        );
+        const imageRows =
+          images.map(
+            (
+              image_url: string,
+              index: number
+            ) => ({
+              product_id: id,
+              image_url,
+              sort_order: index,
+            })
+          );
 
-        const { error: insertImagesError } =
+        const {
+          error:
+            insertImagesError,
+        } =
           await supabaseAdmin!
-            .from("product_images")
+            .from(
+              "product_images"
+            )
             .insert(imageRows);
 
-        if (insertImagesError) {
+        if (
+          insertImagesError
+        ) {
           return NextResponse.json(
-            { error: insertImagesError.message },
+            {
+              error:
+                insertImagesError.message,
+            },
             { status: 400 }
           );
         }
@@ -334,32 +484,50 @@ export async function PATCH(req: Request) {
   }
 }
 
-export async function DELETE(req: Request) {
+export async function DELETE(
+  req: Request
+) {
   try {
-    const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const user =
+      await getAuthenticatedUser();
 
-    const { searchParams } = new URL(req.url);
-    const id = searchParams.get("id");
+    if (!user) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
+    const { searchParams } =
+      new URL(req.url);
+
+    const id =
+      searchParams.get("id");
 
     if (!id) {
       return NextResponse.json(
-        { error: "Product id is required" },
+        {
+          error:
+            "Product id is required",
+        },
         { status: 400 }
       );
     }
 
     assertSupabaseConfigured();
 
-    const { error } = await supabaseAdmin!
-      .from("products")
-      .delete()
-      .eq("id", id);
+    const { error } =
+      await supabaseAdmin!
+        .from("products")
+        .delete()
+        .eq("id", id);
 
     if (error) {
       return NextResponse.json(
-        { error: error.message },
+        {
+          error:
+            error.message,
+        },
         { status: 400 }
       );
     }

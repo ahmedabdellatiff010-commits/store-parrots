@@ -209,7 +209,7 @@ export default function ProductCard({
       </Link>
 
       <div className="pt-4">
-        <div className="flex items-start justify-between gap-3">
+        <div className="flex flex-col gap-2">
           <div className="min-w-0">
             <Link
               href={`/products/${product.slug}`}
@@ -242,22 +242,6 @@ export default function ProductCard({
               </p>
             )}
           </div>
-
-          <span
-            dir="ltr"
-            className="
-              shrink-0
-              whitespace-nowrap
-              text-[12px]
-              font-semibold
-              text-white
-            "
-          >
-            {product.price.toLocaleString(
-              "en-EG"
-            )}{" "}
-            ج
-          </span>
         </div>
 
         {(product.expectedAge ||
@@ -291,6 +275,21 @@ export default function ProductCard({
             )}
           </div>
         )}
+
+        <span
+          dir="ltr"
+          className="
+            mt-3
+            ml-auto
+            whitespace-nowrap
+            text-[12px]
+            font-semibold
+            tracking-[0.2em]
+            text-white
+          "
+        >
+          LE {product.price.toLocaleString("en-EG")} EGP
+        </span>
       </div>
     </motion.article>
   );

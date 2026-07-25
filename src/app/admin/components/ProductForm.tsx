@@ -19,7 +19,7 @@ type Category = {
   slug: string;
 };
 
-type ProductFormData = {
+export type ProductFormData = {
   id?: string;
   name: string;
   slug: string;
@@ -38,10 +38,16 @@ type ProductFormData = {
 
 type Props = {
   initial?: Partial<ProductFormData>;
+  showHeader?: boolean;
+  onCancel?: () => void;
+  onSuccess?: () => void;
 };
 
 export default function ProductForm({
   initial,
+  showHeader = true,
+  onCancel,
+  onSuccess,
 }: Props) {
   const router = useRouter();
 
@@ -87,6 +93,21 @@ export default function ProductForm({
     initial?.video || ""
   );
 
+  const [videoMode, setVideoMode] =
+    useState<"upload" | "url">("url");
+
+  const [videoFile, setVideoFile] =
+    useState<File | null>(null);
+
+  const [videoPreviewUrl, setVideoPreviewUrl] =
+    useState<string | null>(null);
+
+  const [videoUploadLoading, setVideoUploadLoading] =
+    useState(false);
+
+  const [videoUploadError, setVideoUploadError] =
+    useState<string | null>(null);
+
   const [status, setStatus] =
     useState<ProductStatus>(
       initial?.status || "available"
@@ -98,7 +119,7 @@ export default function ProductForm({
   const [additionalImages, setAdditionalImages] =
     useState<File[]>([]);
 
-  const [existingMainImage, setExistingMainImage] =
+  const [existingMainImage] =
     useState(initial?.main_image || "");
 
   const [mainImagePreview, setMainImagePreview] =
@@ -106,6 +127,11 @@ export default function ProductForm({
 
   const [additionalImagePreviews, setAdditionalImagePreviews] =
     useState<string[]>([]);
+
+  const [existingAdditionalImages] =
+    useState<string[]>(
+      initial?.additional_images || []
+    );
 
   const [loading, setLoading] =
     useState(false);
@@ -178,6 +204,13 @@ export default function ProductForm({
         );
       }
 
+      if (
+        videoPreviewUrl &&
+        videoPreviewUrl.startsWith("blob:")
+      ) {
+        URL.revokeObjectURL(videoPreviewUrl);
+      }
+
       additionalImagePreviews.forEach(
         (preview) => {
           if (
@@ -190,6 +223,7 @@ export default function ProductForm({
     };
   }, [
     mainImagePreview,
+    videoPreviewUrl,
     additionalImagePreviews,
   ]);
 
@@ -325,6 +359,89 @@ export default function ProductForm({
     return data.url;
   };
 
+  const uploadVideo = async (
+    file: File
+  ) => {
+    const formData = new FormData();
+
+    formData.append("file", file);
+
+    const response = await fetch(
+      "/api/admin/products/video",
+      {
+        method: "POST",
+        body: formData,
+        credentials: "include",
+      }
+    );
+
+    let data: {
+      url?: string;
+      error?: string;
+    } = {};
+
+    try {
+      data = await response.json();
+    } catch {
+      throw new Error(
+        `فشل رفع الفيديو. كود الخطأ: ${response.status}`
+      );
+    }
+
+    if (!response.ok) {
+      throw new Error(
+        data.error || "فشل رفع الفيديو"
+      );
+    }
+
+    if (!data.url) {
+      throw new Error(
+        "تم رفع الفيديو ولكن لم يتم إرجاع رابط الفيديو"
+      );
+    }
+
+    return data.url;
+  };
+
+  const handleVideoFileChange = (
+    event: ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0] || null;
+
+    if (!file) {
+      return;
+    }
+
+    if (
+      videoPreviewUrl &&
+      videoPreviewUrl.startsWith("blob:")
+    ) {
+      URL.revokeObjectURL(videoPreviewUrl);
+    }
+
+    setVideoFile(file);
+    setVideoUploadError(null);
+    setVideoMode("upload");
+    setVideoPreviewUrl(
+      URL.createObjectURL(file)
+    );
+  };
+
+  const handleVideoRemove = () => {
+    if (
+      videoPreviewUrl &&
+      videoPreviewUrl.startsWith("blob:")
+    ) {
+      URL.revokeObjectURL(videoPreviewUrl);
+    }
+
+    setVideoFile(null);
+    setVideoPreviewUrl(null);
+    setVideoUploadError(null);
+    setVideo("");
+    setVideoMode("url");
+  };
+
   /*
    * حفظ المنتج
    */
@@ -421,18 +538,13 @@ export default function ProductForm({
       /*
        * رفع الصور الإضافية
        */
-      const additionalImageUrls: string[] =
-        [];
+      const additionalImageUrls: string[] = [
+        ...existingAdditionalImages,
+      ];
 
-      for (
-        const image of additionalImages
-      ) {
-        const url =
-          await uploadImage(image);
-
-        additionalImageUrls.push(
-          url
-        );
+      for (const image of additionalImages) {
+        const url = await uploadImage(image);
+        additionalImageUrls.push(url);
       }
 
       /*
@@ -442,7 +554,11 @@ export default function ProductForm({
         ...(mainImageUrl
           ? [mainImageUrl]
           : []),
-        ...additionalImageUrls,
+        ...additionalImageUrls.filter(
+          (imageUrl) =>
+            imageUrl &&
+            imageUrl !== mainImageUrl
+        ),
       ];
 
       /*
@@ -458,6 +574,14 @@ export default function ProductForm({
       const productSlug =
         slug.trim() ||
         generateSlug();
+
+      let finalVideo =
+        video.trim() || null;
+
+      if (videoFile) {
+        setVideoUploadLoading(true);
+        finalVideo = await uploadVideo(videoFile);
+      }
 
       const body = {
         id: productId,
@@ -476,9 +600,7 @@ export default function ProductForm({
           numericQuantity,
         main_image:
           mainImageUrl,
-        video:
-          video.trim() ||
-          null,
+        video: finalVideo,
         status,
         images,
       };
@@ -528,10 +650,8 @@ export default function ProductForm({
         );
       }
 
-      router.push(
-        "/admin/products"
-      );
-
+      onSuccess?.();
+      router.push("/admin/products");
       router.refresh();
     } catch (error) {
       console.error(
@@ -546,6 +666,7 @@ export default function ProductForm({
       );
     } finally {
       setLoading(false);
+      setVideoUploadLoading(false);
     }
   };
 
@@ -555,54 +676,55 @@ export default function ProductForm({
       dir="rtl"
       className="mt-8 pb-16"
     >
-      {/* HEADER */}
+      {showHeader && (
+        <div className="mb-8 flex flex-col gap-5 border-b border-zinc-200 pb-6 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <div className="mb-2 flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  onCancel?.();
+                  if (!onCancel) {
+                    router.push("/admin/products");
+                  }
+                }}
+                className="flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-500 transition hover:bg-zinc-50 hover:text-zinc-950"
+              >
+                ←
+              </button>
 
-      <div className="mb-8 flex flex-col gap-5 border-b border-zinc-200 pb-6 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <div className="mb-2 flex items-center gap-3">
-            <button
-              type="button"
-              onClick={() =>
-                router.push(
-                  "/admin/products"
-                )
-              }
-              className="flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-500 transition hover:bg-zinc-50 hover:text-zinc-950"
-            >
-              ←
-            </button>
+              <div>
+                <h1 className="text-2xl font-bold tracking-tight text-zinc-950">
+                  {initial?.id
+                    ? "تعديل المنتج"
+                    : "إضافة منتج جديد"}
+                </h1>
 
-            <div>
-              <h1 className="text-2xl font-bold tracking-tight text-zinc-950">
-                {initial?.id
-                  ? "تعديل المنتج"
-                  : "إضافة منتج جديد"}
-              </h1>
-
-              <p className="mt-1 text-sm text-zinc-500">
-                {initial?.id
-                  ? "عدّل بيانات المنتج والمعلومات الخاصة به."
-                  : "أضف منتجًا جديدًا إلى متجر نوادر الببغاوات."}
-              </p>
+                <p className="mt-1 text-sm text-zinc-500">
+                  {initial?.id
+                    ? "عدّل بيانات المنتج والمعلومات الخاصة به."
+                    : "أضف منتجًا جديدًا إلى متجر نوادر الببغاوات."}
+                </p>
+              </div>
             </div>
           </div>
-        </div>
 
-        <button
-          type="submit"
-          disabled={
-            loading ||
-            categoriesLoading
-          }
-          className="inline-flex h-12 items-center justify-center rounded-2xl bg-zinc-950 px-7 text-sm font-bold text-white shadow-sm transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          {loading
-            ? "جاري الحفظ..."
-            : initial?.id
-              ? "حفظ التعديلات"
-              : "حفظ المنتج"}
-        </button>
-      </div>
+          <button
+            type="submit"
+            disabled={
+              loading ||
+              categoriesLoading
+            }
+            className="inline-flex h-12 items-center justify-center rounded-2xl bg-zinc-950 px-7 text-sm font-bold text-white shadow-sm transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {loading
+              ? "جاري الحفظ..."
+              : initial?.id
+                ? "حفظ التعديلات"
+                : "حفظ المنتج"}
+          </button>
+        </div>
+      )}
 
       {/* ERROR */}
 
@@ -1067,20 +1189,125 @@ export default function ProductForm({
           </h2>
 
           <p className="mt-1 text-sm text-zinc-500">
-            أضف رابط فيديو للمنتج إذا كان متاحًا.
+            أضف فيديوًا مباشرًا أو رابطًا من YouTube أو Vimeo.
           </p>
         </div>
 
-        <input
-          value={video}
-          onChange={(e) =>
-            setVideo(
-              e.target.value
-            )
-          }
-          placeholder="https://youtube.com/..."
-          className="h-12 w-full rounded-2xl border border-zinc-200 px-4 text-sm outline-none transition placeholder:text-zinc-400 focus:border-zinc-950 focus:ring-4 focus:ring-zinc-100"
-        />
+        <div className="space-y-4">
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => setVideoMode("upload")}
+              className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
+                videoMode === "upload"
+                  ? "bg-zinc-950 text-white"
+                  : "bg-zinc-100 text-zinc-700"
+              }`}
+            >
+              رفع فيديو
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setVideoMode("url")}
+              className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
+                videoMode === "url"
+                  ? "bg-zinc-950 text-white"
+                  : "bg-zinc-100 text-zinc-700"
+              }`}
+            >
+              إضافة رابط
+            </button>
+          </div>
+
+          {videoMode === "upload" ? (
+            <div className="space-y-4">
+              <label className="flex min-h-32 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-zinc-200 bg-zinc-50 p-6 text-center transition hover:border-zinc-400">
+                <span className="text-2xl">🎬</span>
+                <span className="mt-2 text-sm font-semibold text-zinc-800">
+                  {videoFile
+                    ? videoFile.name
+                    : "اختر فيديو من الجهاز"}
+                </span>
+                <span className="mt-1 text-xs text-zinc-500">
+                  MP4, WebM, MOV • حتى 100MB
+                </span>
+                <input
+                  type="file"
+                  accept="video/mp4,video/webm,video/quicktime"
+                  className="hidden"
+                  onChange={handleVideoFileChange}
+                />
+              </label>
+
+              {videoPreviewUrl && (
+                <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-black">
+                  <video
+                    src={videoPreviewUrl}
+                    controls
+                    className="w-full max-h-[320px] object-contain"
+                  />
+                </div>
+              )}
+
+              {(videoFile || video || videoPreviewUrl) && (
+                <div className="flex flex-wrap gap-3">
+                  <label className="inline-flex cursor-pointer items-center justify-center rounded-xl border border-zinc-200 bg-white px-4 py-2 text-sm font-semibold text-zinc-700">
+                    تغيير الفيديو
+                    <input
+                      type="file"
+                      accept="video/mp4,video/webm,video/quicktime"
+                      className="hidden"
+                      onChange={handleVideoFileChange}
+                    />
+                  </label>
+                  <button
+                    type="button"
+                    onClick={handleVideoRemove}
+                    className="rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-700"
+                  >
+                    حذف الفيديو
+                  </button>
+                </div>
+              )}
+
+              {videoUploadLoading && (
+                <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-3 text-sm text-zinc-700">
+                  جاري رفع الفيديو...
+                </div>
+              )}
+
+              {videoUploadError && (
+                <div className="rounded-2xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                  {videoUploadError}
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="space-y-3">
+              <input
+                value={video}
+                onChange={(e) => setVideo(e.target.value)}
+                placeholder="https://www.youtube.com/watch?v=..."
+                className="h-12 w-full rounded-2xl border border-zinc-200 px-4 text-sm outline-none transition placeholder:text-zinc-400 focus:border-zinc-950 focus:ring-4 focus:ring-zinc-100"
+              />
+
+              <p className="text-xs text-zinc-500">
+                يدعم YouTube, Vimeo, وروابط فيديو مباشرة.
+              </p>
+
+              {video && (
+                <button
+                  type="button"
+                  onClick={handleVideoRemove}
+                  className="rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-700"
+                >
+                  إزالة الرابط
+                </button>
+              )}
+            </div>
+          )}
+        </div>
       </section>
 
       {/* BOTTOM ACTIONS */}
@@ -1088,11 +1315,12 @@ export default function ProductForm({
       <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
         <button
           type="button"
-          onClick={() =>
-            router.push(
-              "/admin/products"
-            )
-          }
+          onClick={() => {
+            onCancel?.();
+            if (!onCancel) {
+              router.push("/admin/products");
+            }
+          }}
           disabled={loading}
           className="h-12 rounded-2xl border border-zinc-200 bg-white px-7 text-sm font-bold text-zinc-700 transition hover:bg-zinc-50 disabled:opacity-50"
         >

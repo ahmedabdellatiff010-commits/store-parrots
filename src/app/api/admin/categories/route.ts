@@ -71,12 +71,12 @@ export async function POST(request: Request) {
       .trim()
       .toLowerCase();
 
-    slug = slug
-      .replace(/\s+/g, "-")
-      .replace(/[^a-z0-9\-]/g, "")
-      .replace(/-+/g, "-")
-      .replace(/^-|-$/g, "");
-
+   slug = slug
+  .replace(/\s+/g, "-")
+  .replace(/[^a-z0-9\-]/g, "")
+  .replace(/-+/g, "-")
+  .replace(/^-|-$/g, "");
+  
     const imageFile = formData.get("image");
 
     if (!name || !slug) {

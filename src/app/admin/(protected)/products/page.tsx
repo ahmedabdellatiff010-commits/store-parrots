@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import DeleteProductButton from "@/app/admin/components/DeleteProductButton";
+import ProductFormModal from "@/app/admin/components/ProductFormModal";
 import {
   assertSupabaseConfigured,
   supabaseAdmin,
@@ -15,7 +16,7 @@ export default async function AdminProductsPage() {
     await supabaseAdmin!
       .from("products")
       .select(
-        "id, name, slug, price, main_image, status, quantity, created_at"
+        "id, name, slug, description, category, expected_age, size, temperament, price, main_image, video, status, quantity, created_at, product_images(image_url, sort_order)"
       )
       .order("created_at", {
         ascending: false,
@@ -51,12 +52,7 @@ export default async function AdminProductsPage() {
           </div>
         </div>
 
-        <Link
-          href="/admin/products/new"
-          className="inline-flex h-12 items-center justify-center rounded-2xl bg-zinc-950 px-6 text-sm font-bold text-white shadow-sm transition hover:bg-zinc-800"
-        >
-          + إضافة منتج
-        </Link>
+        <ProductFormModal trigger={"+ إضافة منتج"} />
       </section>
 
       <div className="grid gap-4 sm:grid-cols-3">
@@ -116,12 +112,9 @@ export default async function AdminProductsPage() {
               ابدأ بإضافة أول منتج للمتجر.
             </p>
 
-            <Link
-              href="/admin/products/new"
-              className="mt-5 inline-flex rounded-xl bg-zinc-950 px-5 py-3 text-sm font-bold text-white"
-            >
-              إضافة منتج
-            </Link>
+            <div className="mt-5">
+              <ProductFormModal trigger={"إضافة منتج"} />
+            </div>
           </div>
         ) : (
           <>
@@ -224,12 +217,30 @@ export default async function AdminProductsPage() {
 
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
-                          <Link
-                            href={`/admin/products/${product.id}/edit`}
-                            className="rounded-xl border border-zinc-200 px-4 py-2 text-xs font-bold transition hover:bg-zinc-50"
-                          >
-                            تعديل
-                          </Link>
+                          <ProductFormModal
+                            trigger="تعديل"
+                            initial={{
+                              id: product.id,
+                              name: product.name,
+                              slug: product.slug,
+                              description: product.description || "",
+                              category: product.category || "",
+                              expected_age: product.expected_age || "",
+                              size: product.size || "",
+                              temperament: product.temperament || "",
+                              price: Number(product.price) || 0,
+                              quantity: Number(product.quantity) || 0,
+                              main_image: product.main_image || null,
+                              video: product.video || null,
+                              status: product.status,
+                              additional_images:
+                                product.product_images?.map(
+                                  (image: any) => image.image_url
+                                ) || [],
+                            }}
+                            title="تعديل المنتج"
+                            description="حدّث بيانات المنتج والوسائط من نفس النافذة."
+                          />
 
                           <DeleteProductButton
                             productId={
@@ -318,12 +329,30 @@ export default async function AdminProductsPage() {
                     </span>
 
                     <div className="flex gap-2">
-                      <Link
-                        href={`/admin/products/${product.id}/edit`}
-                        className="rounded-xl border border-zinc-200 px-4 py-2 text-xs font-bold"
-                      >
-                        تعديل
-                      </Link>
+                      <ProductFormModal
+                        trigger="تعديل"
+                        initial={{
+                          id: product.id,
+                          name: product.name,
+                          slug: product.slug,
+                          description: product.description || "",
+                          category: product.category || "",
+                          expected_age: product.expected_age || "",
+                          size: product.size || "",
+                          temperament: product.temperament || "",
+                          price: Number(product.price) || 0,
+                          quantity: Number(product.quantity) || 0,
+                          main_image: product.main_image || null,
+                          video: product.video || null,
+                          status: product.status,
+                          additional_images:
+                            product.product_images?.map(
+                              (image: any) => image.image_url
+                            ) || [],
+                        }}
+                        title="تعديل المنتج"
+                        description="حدّث بيانات المنتج والوسائط من نفس النافذة."
+                      />
 
                       <DeleteProductButton
                         productId={

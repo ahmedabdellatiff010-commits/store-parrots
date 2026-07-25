@@ -65,35 +65,53 @@ export default async function EditProductPage({
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-zinc-900">
-        تعديل المنتج
-      </h1>
+      <div className="mx-auto w-full max-w-[1500px] px-4 py-6 sm:px-6 lg:px-8">
+        <div className="mb-8">
+          <div className="mb-3 flex items-center gap-2 text-sm text-zinc-400">
+            <span>لوحة التحكم</span>
+            <span>/</span>
+            <span>المنتجات</span>
+            <span>/</span>
+            <span className="text-zinc-600">تعديل المنتج</span>
+          </div>
 
-      <p className="mt-2 text-sm text-zinc-500">
-        تعديل بيانات المنتج.
-      </p>
+          <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <h1 className="text-3xl font-bold tracking-tight text-zinc-950">
+                تعديل المنتج
+              </h1>
 
-      <ProductForm
-        initial={{
-          id: product.id,
-          name: product.name,
-          slug: product.slug,
-          description: product.description || "",
-          category: product.category || "",
-          expected_age: product.expected_age || "",
-          size: product.size || "",
-          temperament: product.temperament || "",
-          price: Number(product.price) || 0,
-          quantity: Number(product.quantity) || 0,
-          main_image: product.main_image || null,
-          video: product.video || null,
-          status: product.status,
-          additional_images:
-            images?.map(
-              (image) => image.image_url
-            ) || [],
-        }}
-      />
+              <p className="mt-2 max-w-2xl text-sm leading-6 text-zinc-500">
+                عدّل بيانات المنتج والعرض والمرئيات من نفس الصفحة.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="rounded-[28px] border border-zinc-200 bg-zinc-50/50 p-3 sm:p-5 lg:p-6">
+          <ProductForm
+            initial={{
+              id: product.id,
+              name: product.name,
+              slug: product.slug,
+              description: product.description || "",
+              category: product.category || "",
+              expected_age: product.expected_age || "",
+              size: product.size || "",
+              temperament: product.temperament || "",
+              price: Number(product.price) || 0,
+              quantity: Number(product.quantity) || 0,
+              main_image: product.main_image || null,
+              video: product.video || null,
+              status: product.status,
+              additional_images:
+                images?.map(
+                  (image) => image.image_url
+                ) || [],
+            }}
+          />
+        </div>
+      </div>
     </div>
   );
 }

@@ -93,7 +93,7 @@ export default function Navbar() {
         dir="rtl"
         className={`fixed inset-x-0 top-0 z-50 w-full text-white transition-all duration-500 ${
           isScrolled
-            ? "border-b border-white/[0.08] bg-black/45 shadow-[0_8px_30px_rgba(0,0,0,0.12)] backdrop-blur-xl"
+            ? "border-b border-white/[0.08] bg-black/30 shadow-[0_8px_30px_rgba(0,0,0,0.12)] backdrop-blur-xl"
             : "border-b border-transparent bg-transparent"
         }`}
       >

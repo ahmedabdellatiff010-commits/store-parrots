@@ -10,6 +10,7 @@ import { getProductsByCategory } from "@/app/lib/products";
 import ProductGrid from "@/app/components/ProductGrid";
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
+export const dynamic = "force-dynamic";
 
 type Params = {
   params: Promise<{

@@ -5,6 +5,7 @@ import {
   assertSupabaseConfigured,
   supabaseAdmin,
 } from "@/lib/supabase/admin";
+export const dynamic = "force-dynamic";
 
 type Category = {
   id: string;

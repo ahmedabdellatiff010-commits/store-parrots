@@ -2,7 +2,7 @@ import Link from "next/link";
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
 import ProductGrid from "@/app/components/ProductGrid";
-
+export const dynamic = "force-dynamic";
 export default async function TypesPage() {
   return (
     <main

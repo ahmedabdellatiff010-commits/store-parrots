@@ -10,7 +10,7 @@ import StatsSection from "@/app/components/StatsSection";
 import NewsletterSection from "@/app/components/NewsletterSection";
 import FAQSection from "@/app/components/FAQSection";
 import { getAllProducts } from "@/app/lib/products";
-
+export const dynamic = "force-dynamic";
 export default async function Home() {
   const products = await getAllProducts();
 

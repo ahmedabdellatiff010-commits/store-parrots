@@ -31,7 +31,6 @@ export default function AnimatedCategoryCard({
       transition={{
         duration: 0.5,
         delay: index * 0.05,
-        ease: [0.22, 1, 0.36, 1],
       }}
       viewport={{ once: true, margin: "-50px" }}
       whileHover={{ y: -8 }}

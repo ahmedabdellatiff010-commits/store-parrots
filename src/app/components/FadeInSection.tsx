@@ -21,7 +21,7 @@ export default function FadeInSection({
       transition={{
         duration: 0.8,
         delay,
-        ease: [0.22, 1, 0.36, 1],
+        ease: "easeOut",
       }}
       viewport={{ once: true, margin: "-100px" }}
       className={className}

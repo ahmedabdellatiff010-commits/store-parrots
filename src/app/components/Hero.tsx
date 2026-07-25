@@ -51,7 +51,7 @@ export default function Hero() {
             transition={{
               duration: 0.7,
               delay: 0.2,
-              ease: [0.22, 1, 0.36, 1],
+              ease: "easeOut",
             }}
             className="mb-6 flex items-center gap-3 sm:mb-8"
           >
@@ -74,7 +74,7 @@ export default function Hero() {
             transition={{
               duration: 0.9,
               delay: 0.35,
-              ease: [0.22, 1, 0.36, 1],
+              ease: "easeOut",
             }}
             className="text-4xl font-semibold leading-[1.2] tracking-[-0.04em] sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl"
           >
@@ -93,7 +93,7 @@ export default function Hero() {
             transition={{
               duration: 0.8,
               delay: 0.6,
-              ease: [0.22, 1, 0.36, 1],
+              ease: "easeOut",
             }}
             className="mt-6 max-w-xl text-sm leading-7 text-white/70 sm:mt-7 sm:text-base sm:leading-8"
           >
@@ -112,7 +112,7 @@ export default function Hero() {
             transition={{
               duration: 0.8,
               delay: 0.85,
-              ease: [0.22, 1, 0.36, 1],
+              ease: "easeOut",
             }}
             className="mt-8 flex flex-col items-center gap-3 sm:mt-10 sm:flex-row"
           >

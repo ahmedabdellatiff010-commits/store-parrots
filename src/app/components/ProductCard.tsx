@@ -19,7 +19,6 @@ const cardVariants = {
     y: 0,
     transition: {
       duration: 0.7,
-      ease: [0.22, 1, 0.36, 1],
     },
   },
 };
@@ -44,7 +43,7 @@ export default function ProductCard({
       }}
       transition={{
         duration: 0.45,
-        ease: [0.22, 1, 0.36, 1],
+        ease: "easeOut",
       }}
       className="group w-full"
     >
@@ -69,7 +68,7 @@ export default function ProductCard({
               whileHover={{ scale: secondaryImage ? 1.025 : 1.045 }}
               transition={{
                 duration: 0.9,
-                ease: [0.22, 1, 0.36, 1],
+                ease: "easeOut",
               }}
             >
               <Image
@@ -107,7 +106,7 @@ export default function ProductCard({
                   },
                   scale: {
                     duration: 0.9,
-                    ease: [0.22, 1, 0.36, 1],
+                    ease: "easeOut",
                   },
                 }}
               >
@@ -154,7 +153,7 @@ export default function ProductCard({
               }}
               transition={{
                 duration: 0.45,
-                ease: [0.22, 1, 0.36, 1],
+                ease: "easeOut",
               }}
               className="absolute inset-x-4 bottom-4"
             >

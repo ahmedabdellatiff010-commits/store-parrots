@@ -58,7 +58,7 @@ export default function FAQSection() {
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
           viewport={{ once: true, margin: "-100px" }}
           className="mb-12 text-center"
         >
@@ -83,7 +83,7 @@ export default function FAQSection() {
               transition={{
                 duration: 0.5,
                 delay: index * 0.05,
-                ease: [0.22, 1, 0.36, 1],
+                ease: "easeOut",
               }}
               viewport={{ once: true, margin: "-50px" }}
               className="overflow-hidden rounded-[16px] border border-white/10 bg-white/5 backdrop-blur-xl transition-all duration-300"
@@ -144,7 +144,7 @@ export default function FAQSection() {
                     exit={{ opacity: 0, height: 0 }}
                     transition={{
                       duration: 0.3,
-                      ease: [0.22, 1, 0.36, 1],
+                    ease: "easeOut",
                     }}
                     className="border-t border-white/10 px-6 py-4"
                   >
@@ -170,7 +170,7 @@ export default function FAQSection() {
           transition={{
             duration: 0.6,
             delay: 0.3,
-            ease: [0.22, 1, 0.36, 1],
+            ease: "easeOut",
           }}
           viewport={{ once: true }}
           className="mt-12 rounded-[24px] border border-white/10 bg-gradient-to-r from-emerald-500/10 to-cyan-500/10 p-6 text-center backdrop-blur-xl sm:p-8"

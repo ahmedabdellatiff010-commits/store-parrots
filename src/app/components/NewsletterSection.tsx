@@ -29,7 +29,7 @@ export default function NewsletterSection() {
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
           viewport={{ once: true, margin: "-100px" }}
           className="relative overflow-hidden rounded-[40px] border border-white/10 bg-gradient-to-br from-white/5 to-transparent p-8 sm:p-12 shadow-[0_40px_120px_rgba(0,0,0,0.3)]"
         >

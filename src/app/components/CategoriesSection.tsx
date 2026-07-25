@@ -30,7 +30,7 @@ export default async function CategoriesSection() {
     <section
       id="categories"
       dir="rtl"
-      className="w-full bg-[#050712] py-16 sm:py-20 lg:py-28"
+      className="w-full bg-black py-16 sm:py-20 lg:py-28"
     >
       <div className="mx-auto w-full max-w-[1600px] px-5 sm:px-8 lg:px-12 xl:px-16">
         {/* =========================

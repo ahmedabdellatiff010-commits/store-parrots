@@ -1,4 +1,6 @@
 import Link from "next/link";
+import Navbar from "@/app/components/Navbar";
+import Footer from "@/app/components/Footer";
 import {
   assertSupabaseConfigured,
   supabaseAdmin,
@@ -41,142 +43,196 @@ export default async function CategoriesPage() {
   return (
     <main
       dir="rtl"
-      className="min-h-screen bg-black"
+      className="min-h-screen bg-[#0b0b0b] text-white"
     >
-      {/* Breadcrumb */}
-      <div className="border-b border-white/20 bg-black">
-        <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
-          <nav className="flex items-center gap-2 text-sm">
+      <Navbar />
+
+      {/* =====================================================
+          PAGE HEADER
+      ====================================================== */}
+
+      <section className="border-b border-white/[0.08]">
+        <div className="mx-auto max-w-[1600px] px-6 pb-12 pt-32 sm:px-10 sm:pb-14 sm:pt-36 lg:px-14 lg:pb-16 lg:pt-40 xl:px-20">
+          {/* Breadcrumb */}
+
+          <nav
+            aria-label="مسار التنقل"
+            className="flex items-center gap-3 text-[11px] text-white/35"
+          >
             <Link
               href="/"
-              className="text-white/60 transition hover:text-white"
+              className="transition-colors duration-300 hover:text-white/80"
             >
               الرئيسية
             </Link>
 
-            <span className="text-white/30">
+            <span className="text-white/15">
               /
             </span>
 
-            <span className="font-medium text-white">
+            <span className="text-white/70">
               الأقسام
             </span>
           </nav>
-        </div>
-      </div>
 
-      {/* Header */}
-      <section className="border-b border-white/20 bg-black">
-        <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
-          <div className="max-w-2xl">
-            <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-white/20 text-xl">
-              🦜
-            </div>
+          {/* Header Content */}
 
-            <h1 className="text-3xl font-black tracking-tight text-white sm:text-5xl">
-              تصفح الأقسام
-            </h1>
-
-            <p className="mt-4 text-sm leading-7 text-white/70 sm:text-base">
-              اكتشف مجموعتنا المختارة من الببغاوات
-              وتصفح الأقسام المختلفة للعثور على
-              الببغاء المناسب لك.
-            </p>
-          </div>
-
-          {/* Stats */}
-          <div className="mt-8 flex items-center gap-3">
-            <div className="rounded-xl border border-white/20 bg-white/5 px-4 py-2.5">
-              <span className="text-sm font-bold text-white">
-                {categoryList.length}
+          <div className="mt-10 flex flex-col gap-8 sm:flex-row sm:items-end sm:justify-between">
+            <div className="max-w-2xl">
+              <span className="text-[10px] font-medium tracking-[0.3em] text-white/30">
+                استكشف مجموعتنا
               </span>
 
-              <span className="mr-1 text-xs text-white/60">
-                قسم متاح
+              <h1 className="mt-4 text-3xl font-medium tracking-tight text-white sm:text-4xl lg:text-5xl">
+                أقسام الببغاوات
+              </h1>
+
+              <p className="mt-5 max-w-xl text-sm leading-7 text-white/40 sm:text-[15px]">
+                تصفح مجموعتنا من الببغاوات واكتشف
+                الأقسام المختلفة للعثور على الطائر
+                المناسب لك.
+              </p>
+            </div>
+
+            {/* Category Count */}
+
+            <div className="flex items-center gap-3 text-xs text-white/35">
+              <span className="h-px w-8 bg-white/20" />
+
+              <span>
+                {categoryList.length} قسم متاح
               </span>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Categories */}
-      <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
-        {categoryList.length === 0 ? (
-          <div className="flex min-h-[400px] flex-col items-center justify-center rounded-3xl border border-white/20 bg-white/5 px-6 text-center shadow-sm">
-            <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-white/10 text-4xl">
-              🦜
+      {/* =====================================================
+          CATEGORIES
+      ====================================================== */}
+
+      <section>
+        <div className="mx-auto max-w-[1600px] px-6 py-10 sm:px-10 sm:py-12 lg:px-14 lg:py-16 xl:px-20">
+          {categoryList.length === 0 ? (
+            /* =================================================
+               EMPTY STATE
+            ================================================== */
+
+            <div className="flex min-h-[420px] items-center justify-center border-y border-white/[0.08]">
+              <div className="max-w-md px-6 py-20 text-center">
+                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-xl">
+                  🦜
+                </div>
+
+                <h2 className="mt-6 text-lg font-medium text-white">
+                  لا توجد أقسام حاليًا
+                </h2>
+
+                <p className="mt-3 text-sm leading-7 text-white/40">
+                  لم تتم إضافة أي أقسام للمتجر
+                  حتى الآن.
+                </p>
+
+                <Link
+                  href="/"
+                  className="mt-7 inline-flex h-11 items-center justify-center border border-white/15 bg-white px-6 text-sm font-medium text-black transition-colors duration-300 hover:bg-white/90"
+                >
+                  العودة للرئيسية
+                </Link>
+              </div>
             </div>
+          ) : (
+            <>
+              {/* Section Header */}
 
-            <h2 className="mt-6 text-xl font-bold text-white">
-              لا توجد أقسام حاليًا
-            </h2>
+              <div className="mb-8 flex items-center justify-between border-b border-white/[0.08] pb-5">
+                <div>
+                  <p className="text-xs text-white/35">
+                    تصفح حسب القسم
+                  </p>
 
-            <p className="mt-3 text-sm text-white/70">
-              لم تتم إضافة أي أقسام للمتجر حتى الآن.
-            </p>
+                  <h2 className="mt-2 text-lg font-medium text-white">
+                    جميع الأقسام
+                  </h2>
+                </div>
 
-            <Link
-              href="/"
-              className="mt-7 inline-flex h-11 items-center justify-center rounded-xl bg-white/20 px-6 text-sm font-bold text-white transition hover:bg-white/30"
-            >
-              العودة للرئيسية
-            </Link>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {categoryList.map((category) => (
-              <Link
-                key={category.id}
-                href={`/categories/${category.slug}`}
-                className="group overflow-hidden rounded-3xl border border-white/20 bg-white/5 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-white/40 hover:shadow-[0_10px_40px_rgba(255,255,255,0.1)]"
-              >
-                {/* Image */}
-                <div className="relative aspect-[4/3] overflow-hidden bg-white/10">
-                  {category.image ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={category.image}
-                      alt={category.name}
-                      className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-                    />
-                  ) : (
-                    <div className="flex h-full w-full items-center justify-center">
-                      <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-white/20 text-4xl shadow-sm">
-                        🦜
+                <span className="text-[10px] tracking-[0.2em] text-white/25">
+                  COLLECTIONS
+                </span>
+              </div>
+
+              {/* Categories Grid */}
+
+              <div className="grid grid-cols-1 gap-px overflow-hidden border border-white/[0.08] bg-white/[0.08] sm:grid-cols-2 lg:grid-cols-3">
+                {categoryList.map(
+                  (category) => (
+                    <Link
+                      key={category.id}
+                      href={`/categories/${category.slug}`}
+                      className="group relative bg-[#0b0b0b] transition-colors duration-500 hover:bg-[#111111]"
+                    >
+                      {/* Image */}
+
+                      <div className="relative aspect-[4/3] overflow-hidden bg-[#111111]">
+                        {category.image ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={category.image}
+                            alt={category.name}
+                            className="h-full w-full object-cover opacity-90 transition duration-700 ease-out group-hover:scale-[1.03] group-hover:opacity-100"
+                          />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center bg-[#111111]">
+                            <span className="text-4xl opacity-30">
+                              🦜
+                            </span>
+                          </div>
+                        )}
+
+                        {/* Subtle Overlay */}
+
+                        <div className="pointer-events-none absolute inset-0 bg-black/10 transition-colors duration-500 group-hover:bg-black/0" />
+
+                        {/* Number */}
+
+                        <span className="absolute left-5 top-5 text-[10px] tabular-nums tracking-wider text-white/50">
+                          {String(
+                            categoryList.indexOf(
+                              category
+                            ) + 1
+                          ).padStart(2, "0")}
+                        </span>
                       </div>
-                    </div>
-                  )}
 
-                  {/* Overlay */}
-                  <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/50 to-transparent opacity-0 transition duration-300 group-hover:opacity-100" />
+                      {/* Content */}
 
-                  {/* Arrow */}
-                  <div className="absolute bottom-4 left-4 flex h-10 w-10 translate-y-2 items-center justify-center rounded-full bg-white text-black opacity-0 shadow-lg transition duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-                    ←
-                  </div>
-                </div>
+                      <div className="flex items-center justify-between gap-5 px-5 py-5 sm:px-6 sm:py-6">
+                        <div className="min-w-0">
+                          <h2 className="truncate text-base font-medium text-white transition-transform duration-300 group-hover:-translate-x-1">
+                            {category.name}
+                          </h2>
 
-                {/* Content */}
-                <div className="flex items-center justify-between gap-4 p-5">
-                  <div className="min-w-0">
-                    <h2 className="truncate text-lg font-bold text-white">
-                      {category.name}
-                    </h2>
+                          <p className="mt-2 text-[11px] text-white/30">
+                            اكتشف المجموعة
+                          </p>
+                        </div>
 
-                    <p className="mt-1 text-xs text-white/60">
-                      اكتشف المنتجات
-                    </p>
-                  </div>
+                        {/* Arrow */}
 
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/10 text-white/60 transition group-hover:bg-white/30 group-hover:text-white">
-                    ←
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        )}
+                        <span className="flex h-9 w-9 shrink-0 items-center justify-center border border-white/10 text-sm text-white/35 transition-all duration-300 group-hover:-translate-x-1 group-hover:border-white/30 group-hover:text-white">
+                          ←
+                        </span>
+                      </div>
+                    </Link>
+                  )
+                )}
+              </div>
+            </>
+          )}
+        </div>
       </section>
+
+      <Footer />
     </main>
   );
 }

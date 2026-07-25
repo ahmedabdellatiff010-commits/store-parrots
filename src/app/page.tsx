@@ -39,7 +39,7 @@ export default async function Home() {
                   جودة مضمونة
                 </p>
                 <h3 className="mt-4 text-lg font-semibold text-white">
-                  فراخ مختارة بعناية
+                  بغبغانات مختارة بعناية
                 </h3>
                 <p className="mt-3 text-sm leading-6 text-white/70 group-hover:text-white/80 transition-colors duration-300">
                   كل ببغاء يمر بفحص صحي شامل قبل أن يصل إليك.

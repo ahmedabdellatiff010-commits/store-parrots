@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
+import { Check } from "lucide-react";
 
 interface Testimonial {
   name: string;
@@ -13,29 +14,34 @@ interface Testimonial {
 const testimonials: Testimonial[] = [
   {
     name: "أحمد محمود",
-    role: "مالك ببغاء أفريقي",
-    content: "تجربة رائعة مع المتجر! الببغاء وصل بصحة ممتازة والفريق ساعدني بشكل احترافي.",
-    avatar: "👨‍💼",
+    role: "القاهرة",
+    content:
+      "تجربة ممتازة من البداية للنهاية. التواصل كان واضح وسريع، والببغاء وصل بحالة ممتازة زي ما اتفقنا.",
+    avatar: "أ",
     rating: 5,
   },
   {
     name: "فاطمة علي",
-    role: "هاوية طيور",
-    content: "أفضل خدمة عملاء تعاملت معها. واتساب الفريق سريع جداً والإجابات مفيدة.",
-    avatar: "👩‍💼",
+    role: "الإسكندرية",
+    content:
+      "أكثر شيء عجبني هو سرعة الرد على واتساب والاهتمام بالتفاصيل. تجربة مريحة وأنصح بالتعامل معهم.",
+    avatar: "ف",
     rating: 5,
   },
   {
     name: "محمد سعيد",
-    role: "جامع الببغاوات النادرة",
-    content: "جودة الببغاوات عالية جداً وآمنة. أصبحت زبون دائم لديهم.",
-    avatar: "🧔",
+    role: "الجيزة",
+    content:
+      "الببغاء كان مطابقًا للوصف والصور، والتعامل كان محترم جدًا. بالتأكيد هتعامل معاهم مرة تانية.",
+    avatar: "م",
     rating: 5,
   },
 ];
 
-const containerVariants = {
-  hidden: { opacity: 0 },
+const containerVariants: Variants = {
+  hidden: {
+    opacity: 0,
+  },
   visible: {
     opacity: 1,
     transition: {
@@ -45,102 +51,198 @@ const containerVariants = {
   },
 };
 
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
+const itemVariants: Variants = {
+  hidden: {
+    opacity: 0,
+    y: 20,
+  },
   visible: {
     opacity: 1,
     y: 0,
     transition: {
       duration: 0.6,
+      ease: [0.22, 1, 0.36, 1],
     },
   },
 };
 
 export default function TestimonialsSection() {
   return (
-    <section id="testimonials" className="bg-black py-20 sm:py-24 lg:py-32">
-      <div className="mx-auto w-full max-w-7xl px-6 sm:px-8 lg:px-10">
-        {/* HEADER */}
+    <section
+      id="testimonials"
+      dir="rtl"
+      className="border-t border-white/[0.08] bg-black py-20 sm:py-24 lg:py-28"
+    >
+      <div className="mx-auto w-full max-w-[1440px] px-5 sm:px-8 lg:px-12">
+        {/* =====================================================
+            HEADER
+        ====================================================== */}
+
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
+          initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          viewport={{ once: true, margin: "-100px" }}
-          className="mb-16 text-center"
+          transition={{
+            duration: 0.6,
+            ease: [0.22, 1, 0.36, 1],
+          }}
+          viewport={{
+            once: true,
+            margin: "-80px",
+          }}
+          className="flex flex-col gap-7 border-b border-white/[0.08] pb-10 lg:flex-row lg:items-end lg:justify-between"
         >
-          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-white/60">
-            آراء العملاء
-          </p>
-          <h2 className="mt-4 text-3xl font-semibold text-white md:text-4xl lg:text-5xl">
-            تجارب حقيقية من عملائنا السعداء
-          </h2>
-          <p className="mt-4 max-w-2xl mx-auto text-base leading-7 text-zinc-400">
-            اكتشف ما يقوله عملاؤنا عن تجربتهم مع متجرنا وخدمة فريقنا الاحترافي
-          </p>
+          <div className="max-w-2xl">
+            <p className="text-[10px] font-medium tracking-[0.25em] text-white/35">
+              آراء العملاء
+            </p>
+
+            <h2 className="mt-4 text-3xl font-medium tracking-[-0.04em] text-white sm:text-4xl lg:text-5xl">
+              تجارب عملائنا
+            </h2>
+
+            <p className="mt-5 max-w-xl text-sm leading-8 text-white/45">
+              نحرص على أن تكون تجربة شراء الببغاء واضحة ومريحة،
+              من أول تواصل وحتى استلام الطائر.
+            </p>
+          </div>
+
+          {/* Rating */}
+
+          <div className="flex items-center gap-5">
+            <div className="flex items-center gap-1">
+              {Array.from({ length: 5 }).map((_, index) => (
+                <span
+                  key={index}
+                  className="text-sm text-white"
+                >
+                  ★
+                </span>
+              ))}
+            </div>
+
+            <div className="h-8 w-px bg-white/10" />
+
+            <div>
+              <p className="text-sm font-medium text-white">
+                4.8 من 5
+              </p>
+
+              <p className="mt-1 text-[10px] text-white/30">
+                تقييم العملاء
+              </p>
+            </div>
+          </div>
         </motion.div>
 
-        {/* TESTIMONIALS GRID */}
+        {/* =====================================================
+            TESTIMONIALS
+        ====================================================== */}
+
         <motion.div
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
+          viewport={{
+            once: true,
+            margin: "-80px",
+          }}
+          className="grid md:grid-cols-3"
         >
           {testimonials.map((testimonial, index) => (
-            <motion.div
-              key={index}
+            <motion.article
+              key={testimonial.name}
               variants={itemVariants}
-              whileHover={{
-                y: -8,
-                transition: { duration: 0.3 },
-              }}
-              className="group relative rounded-[24px] border border-white/20 bg-gradient-to-br from-white/5 to-white/0 p-6 backdrop-blur-xl shadow-[0_20px_60px_rgba(0,0,0,0.25)] transition-all duration-500 hover:border-white/40 hover:shadow-[0_28px_100px_rgba(255,255,255,0.1)]"
+              className={`
+                py-9
+                md:px-8
+                lg:py-10
+                ${
+                  index === 0
+                    ? "md:pr-0"
+                    : ""
+                }
+                ${
+                  index === testimonials.length - 1
+                    ? "md:pl-0"
+                    : ""
+                }
+                ${
+                  index !== testimonials.length - 1
+                    ? "border-b border-white/[0.08] md:border-b-0 md:border-l"
+                    : ""
+                }
+              `}
             >
-              {/* RATING */}
-              <div className="mb-4 flex gap-1">
-                {[...Array(testimonial.rating)].map((_, i) => (
-                  <motion.span
-                    key={i}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    transition={{
-                      duration: 0.4,
-                      delay: index * 0.05 + i * 0.05,
-                    }}
-                    viewport={{ once: true }}
-                    className="text-lg"
+              {/* Rating */}
+
+              <div className="flex items-center gap-1">
+                {Array.from({
+                  length: testimonial.rating,
+                }).map((_, starIndex) => (
+                  <span
+                    key={starIndex}
+                    className="text-xs text-white"
+                    aria-hidden="true"
                   >
-                    ⭐
-                  </motion.span>
+                    ★
+                  </span>
                 ))}
               </div>
 
-              {/* CONTENT */}
-              <p className="mb-6 leading-7 text-white/80 group-hover:text-white/90 transition-colors duration-300">
-                "{testimonial.content}"
-              </p>
+              {/* Quote */}
 
-              {/* AUTHOR */}
-              <div className="flex items-center gap-3">
-                <div className="text-3xl">{testimonial.avatar}</div>
+              <div className="mt-6">
+                <span className="text-3xl font-serif leading-none text-white/15">
+                  “
+                </span>
+
+                <p className="mt-2 max-w-md text-sm leading-8 text-white/60">
+                  {testimonial.content}
+                </p>
+              </div>
+
+              {/* Customer */}
+
+              <div className="mt-8 flex items-center gap-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-xs font-medium text-white">
+                  {testimonial.avatar}
+                </div>
+
                 <div>
-                  <p className="font-semibold text-white group-hover:text-gray-200 transition-colors duration-300">
-                    {testimonial.name}
-                  </p>
-                  <p className="text-xs text-zinc-400 group-hover:text-zinc-300 transition-colors duration-300">
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-medium text-white">
+                      {testimonial.name}
+                    </p>
+
+                    <span
+                      className="flex h-4 w-4 items-center justify-center rounded-full bg-white text-black"
+                      title="عميل موثّق"
+                    >
+                      <Check
+                        size={10}
+                        strokeWidth={2.5}
+                      />
+                    </span>
+                  </div>
+
+                  <p className="mt-1 text-[11px] text-white/30">
                     {testimonial.role}
                   </p>
                 </div>
               </div>
-
-              {/* DECORATIVE QUOTE */}
-              <div className="absolute top-4 right-4 opacity-5 text-4xl group-hover:opacity-10 transition-opacity duration-300">
-                "
-              </div>
-            </motion.div>
+            </motion.article>
           ))}
         </motion.div>
+
+        {/* =====================================================
+            BOTTOM NOTE
+        ====================================================== */}
+
+        <div className="mt-4 border-t border-white/[0.08] pt-7">
+          <p className="text-[11px] text-white/25">
+            تجارب عملائنا تساعدنا دائمًا على تقديم تجربة أفضل.
+          </p>
+        </div>
       </div>
     </section>
   );

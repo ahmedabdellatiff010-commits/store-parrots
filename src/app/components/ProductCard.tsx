@@ -2,23 +2,24 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 import type { Product } from "@/app/types/product";
 
 type ProductCardProps = {
   product: Product;
 };
 
-const cardVariants = {
+const cardVariants: Variants = {
   hidden: {
     opacity: 0,
-    y: 24,
+    y: 20,
   },
   visible: {
     opacity: 1,
     y: 0,
     transition: {
-      duration: 0.7,
+      duration: 0.6,
+      ease: [0.22, 1, 0.36, 1],
     },
   },
 };

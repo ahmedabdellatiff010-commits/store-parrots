@@ -5,24 +5,72 @@ import ProductGrid from "@/app/components/ProductGrid";
 
 export default async function TypesPage() {
   return (
-    <main className="min-h-screen bg-[#fcfcfa] text-zinc-900" dir="rtl">
+    <main
+      dir="rtl"
+      className="min-h-screen bg-[#0b0b0b] text-white"
+    >
       <Navbar />
 
-      <section className="mx-auto max-w-7xl px-6 py-10 md:px-8 lg:px-10 lg:py-16">
-        <nav className="text-sm text-zinc-600">
-          <Link href="/" className="hover:text-zinc-900">
-            الرئيسية
-          </Link>
-          <span className="mx-2">›</span>
-          <span className="font-semibold text-zinc-900">الأنواع</span>
-        </nav>
+      {/* Page Header */}
+      <section className="border-b border-white/[0.08]">
+        <div className="mx-auto max-w-[1600px] px-6 pb-12 pt-32 sm:px-10 sm:pt-36 lg:px-14 lg:pb-16 lg:pt-40 xl:px-20">
+          {/* Breadcrumb */}
+          <nav
+            aria-label="مسار التنقل"
+            className="flex items-center gap-3 text-[11px] text-white/35"
+          >
+            <Link
+              href="/"
+              className="transition-colors duration-300 hover:text-white/80"
+            >
+              الرئيسية
+            </Link>
 
-        <header className="mt-6">
-          <h1 className="text-3xl font-semibold text-zinc-950">الأنواع</h1>
-          <p className="mt-2 text-sm text-zinc-600">كل المنتجات المتاحة في المتجر</p>
-        </header>
+            <span className="text-white/15">/</span>
 
-        <div className="mt-8">
+            <span className="text-white/70">
+              الأنواع
+            </span>
+          </nav>
+
+          {/* Heading */}
+          <div className="mt-10 max-w-2xl">
+            <span className="text-[10px] font-medium tracking-[0.3em] text-white/30">
+              اكتشف مجموعتنا
+            </span>
+
+            <h1 className="mt-4 text-3xl font-medium tracking-tight text-white sm:text-4xl lg:text-5xl">
+              أنواع الببغاوات
+            </h1>
+
+            <p className="mt-5 max-w-xl text-sm leading-7 text-white/40 sm:text-[15px]">
+              تصفح جميع الببغاوات المتاحة لدينا واختر الطائر
+              المناسب لك.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Products */}
+      <section>
+        <div className="mx-auto max-w-[1600px] px-6 py-10 sm:px-10 sm:py-12 lg:px-14 lg:py-16 xl:px-20">
+          {/* Section Top */}
+          <div className="mb-8 flex items-center justify-between border-b border-white/[0.08] pb-5">
+            <div>
+              <p className="text-xs text-white/35">
+                مجموعة الببغاوات
+              </p>
+
+              <h2 className="mt-2 text-lg font-medium text-white">
+                جميع الأنواع
+              </h2>
+            </div>
+
+            <span className="text-[10px] tracking-[0.2em] text-white/25">
+              PARROTS
+            </span>
+          </div>
+
           <ProductGrid />
         </div>
       </section>

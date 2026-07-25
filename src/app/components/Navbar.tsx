@@ -136,7 +136,7 @@ export default function Navbar() {
               className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
             >
               <span className="block text-[16px] font-semibold tracking-[0.4em] transition-opacity duration-300 hover:opacity-60 sm:text-[18px]">
-                نــوادر
+                ملك الغابه
               </span>
             </Link>
 

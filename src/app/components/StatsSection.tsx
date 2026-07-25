@@ -55,7 +55,7 @@ const itemVariants = {
 
 export default function StatsSection() {
   return (
-    <section id="stats" className="bg-[#050712] py-16 sm:py-20">
+    <section id="stats" className="bg-black py-16 sm:py-20">
       <div className="mx-auto w-full max-w-7xl px-6 sm:px-8 lg:px-10">
         <motion.div
           variants={containerVariants}
@@ -72,7 +72,7 @@ export default function StatsSection() {
                 y: -6,
                 transition: { duration: 0.3 },
               }}
-              className="group relative rounded-[20px] border border-white/10 bg-gradient-to-br from-white/8 to-white/3 p-6 text-center backdrop-blur-xl shadow-[0_16px_60px_rgba(0,0,0,0.2)] transition-all duration-500 hover:border-cyan-400/30 hover:from-cyan-500/10 hover:to-white/5 hover:shadow-[0_20px_80px_rgba(0,173,230,0.15)]"
+              className="group relative rounded-[20px] border border-white/20 bg-gradient-to-br from-white/5 to-white/0 p-6 text-center backdrop-blur-xl shadow-[0_16px_60px_rgba(0,0,0,0.2)] transition-all duration-500 hover:border-white/40 hover:shadow-[0_20px_100px_rgba(255,255,255,0.1)]"
             >
               {/* ICON */}
               <motion.div
@@ -97,7 +97,7 @@ export default function StatsSection() {
                   delay: index * 0.1 + 0.1,
                 }}
                 viewport={{ once: true }}
-                className="mb-2 text-3xl font-bold text-cyan-300 group-hover:text-cyan-200 transition-colors duration-300"
+                className="mb-2 text-3xl font-bold text-white group-hover:text-gray-100 transition-colors duration-300"
               >
                 {stat.value}
               </motion.div>
@@ -108,7 +108,7 @@ export default function StatsSection() {
               </p>
 
               {/* DECORATIVE GLOW */}
-              <div className="absolute inset-0 rounded-[20px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-br from-cyan-500/20 via-transparent to-transparent pointer-events-none" />
+              <div className="absolute inset-0 rounded-[20px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/5 pointer-events-none" />
             </motion.div>
           ))}
         </motion.div>

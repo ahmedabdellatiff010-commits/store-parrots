@@ -13,7 +13,7 @@ export default function ProductDetails({
   product,
 }: ProductDetailsProps) {
   return (
-    <main dir="rtl" className="w-full bg-white">
+    <main dir="rtl" className="w-full bg-black">
       {/* Product */}
       <section className="mx-auto max-w-[1200px] px-4 py-8 sm:px-6 sm:py-12 lg:px-8 lg:py-16">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-12">
@@ -34,7 +34,7 @@ export default function ProductDetails({
       </section>
 
       {/* Reviews */}
-      <section className="border-t border-zinc-200">
+      <section className="border-t border-white/20">
         <div className="mx-auto max-w-[1200px] px-4 py-12 sm:px-6 lg:px-8">
           <ReviewsSection />
         </div>

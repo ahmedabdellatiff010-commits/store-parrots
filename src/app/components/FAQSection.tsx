@@ -62,7 +62,7 @@ export default function FAQSection() {
           viewport={{ once: true, margin: "-100px" }}
           className="mb-12 text-center"
         >
-          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-emerald-400">
+          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-white/60">
             أسئلة متكررة
           </p>
           <h2 className="mt-4 text-3xl font-semibold text-white sm:text-4xl">
@@ -86,14 +86,14 @@ export default function FAQSection() {
                 ease: "easeOut",
               }}
               viewport={{ once: true, margin: "-50px" }}
-              className="overflow-hidden rounded-[16px] border border-white/10 bg-white/5 backdrop-blur-xl transition-all duration-300"
+              className="overflow-hidden rounded-[16px] border border-white/20 bg-gradient-to-r from-white/5 to-white/0 backdrop-blur-xl transition-all duration-300 hover:border-white/40 hover:shadow-[0_10px_40px_rgba(255,255,255,0.08)]"
             >
               {/* BUTTON */}
               <motion.button
                 onClick={() =>
                   setOpenId(openId === item.id ? null : item.id)
                 }
-                className="relative w-full px-6 py-4 text-left transition-all duration-300 hover:bg-white/10"
+                className="relative w-full px-6 py-4 text-left transition-all duration-300 hover:bg-white/5"
               >
                 {/* CONTENT */}
                 <div className="flex items-center justify-between gap-4">
@@ -126,7 +126,7 @@ export default function FAQSection() {
 
                 {/* BOTTOM BORDER ANIMATION */}
                 <motion.div
-                  className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-emerald-500 to-cyan-500"
+                  className="absolute bottom-0 left-0 h-0.5 bg-white"
                   initial={{ width: 0 }}
                   animate={{
                     width: openId === item.id ? "100%" : 0,
@@ -146,7 +146,7 @@ export default function FAQSection() {
                       duration: 0.3,
                     ease: "easeOut",
                     }}
-                    className="border-t border-white/10 px-6 py-4"
+                    className="border-t border-white/5 px-6 py-4"
                   >
                     <motion.p
                       initial={{ opacity: 0 }}
@@ -173,14 +173,14 @@ export default function FAQSection() {
             ease: "easeOut",
           }}
           viewport={{ once: true }}
-          className="mt-12 rounded-[24px] border border-white/10 bg-gradient-to-r from-emerald-500/10 to-cyan-500/10 p-6 text-center backdrop-blur-xl sm:p-8"
+          className="mt-12 rounded-[24px] border border-white/5 bg-black p-6 text-center backdrop-blur-xl sm:p-8"
         >
           <p className="text-sm text-zinc-400">
             هل لديك سؤال آخر؟
           </p>
           <p className="mt-2 text-xl font-semibold text-white">
             تواصل معنا عبر{" "}
-            <a href="#" className="text-emerald-400 hover:text-emerald-300 transition-colors">
+            <a href="#" className="text-white/80 hover:text-white transition-colors">
               واتساب
             </a>{" "}
             أو البريد الإلكتروني

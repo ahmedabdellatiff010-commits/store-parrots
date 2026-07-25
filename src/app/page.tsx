@@ -19,7 +19,7 @@ export default async function Home() {
       <Navbar />
       <Hero />
 
-      <section id="hero-features" className="bg-[#050712] py-14 sm:py-16">
+      <section id="hero-features" className="bg-black py-14 sm:py-16">
         <div className="mx-auto w-full max-w-7xl px-6 sm:px-8 lg:px-10">
           <FadeInSection delay={0.1}>
             <div className="mb-10 text-center">
@@ -82,7 +82,7 @@ export default async function Home() {
 
       <section id="featured" className="mx-auto max-w-7xl px-6 py-20 md:px-8 lg:px-10">
         <FadeInSection delay={0.1}>
-          <div className="mb-10 overflow-hidden rounded-[40px] border border-white/10 bg-slate-950/20 p-8 shadow-[0_40px_120px_rgba(15,23,42,0.35)] md:p-10 transition-all duration-500 hover:border-white/20 hover:bg-slate-950/30 hover:shadow-[0_50px_150px_rgba(15,23,42,0.45)]">
+          <div className="mb-10 rounded-[24px] border border-white/5 bg-black p-6 md:p-8 transition-all duration-500 hover:border-white/10">
             <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
               <div>
                 <p className="text-sm font-semibold uppercase tracking-[0.3em] text-zinc-400">
@@ -101,15 +101,13 @@ export default async function Home() {
         </FadeInSection>
 
         <FadeInSection delay={0.2}>
-          <div className="overflow-hidden rounded-[40px] border border-white/10 bg-[#08111d]/80 p-4 shadow-[0_24px_60px_rgba(0,0,0,0.28)] md:p-6 transition-all duration-500 hover:border-white/20 hover:bg-[#08111d] hover:shadow-[0_32px_80px_rgba(0,0,0,0.4)]">
-            <ProductGrid />
-          </div>
+          <ProductGrid />
         </FadeInSection>
       </section>
 
       <section id="cta" className="mx-auto max-w-7xl px-6 pb-20 md:px-8 lg:px-10">
         <FadeInSection delay={0.1}>
-          <div className="group overflow-hidden rounded-[40px] border border-white/10 bg-gradient-to-br from-[#071118] via-[#020409] to-[#03111b] p-8 shadow-[0_40px_120px_rgba(0,0,0,0.45)] md:p-12 transition-all duration-500 hover:border-white/20 hover:shadow-[0_50px_140px_rgba(0,0,0,0.55)]">
+          <div className="group overflow-hidden rounded-[40px] border border-white/5 bg-black p-8 shadow-[0_40px_120px_rgba(0,0,0,0.45)] md:p-12 transition-all duration-500 hover:border-white/10 hover:shadow-[0_50px_140px_rgba(0,0,0,0.55)]">
             <p className="text-sm font-semibold uppercase tracking-[0.3em] text-zinc-400 group-hover:text-white/60 transition-colors duration-300">
               Direct ordering
             </p>

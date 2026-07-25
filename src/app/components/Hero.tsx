@@ -32,8 +32,7 @@ export default function Hero() {
 
       <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-b from-black/40 via-black/10 to-black/75" />
 
-      <div className="pointer-events-none absolute right-[-7rem] top-1/4 z-5 h-[26rem] w-[26rem] rounded-full bg-cyan-500/10 blur-3xl" />
-      <div className="pointer-events-none absolute left-[-6rem] top-2/3 z-5 h-[24rem] w-[24rem] rounded-full bg-emerald-500/10 blur-3xl" />
+      {/* Decorative elements removed for cleaner aesthetic */}
 
       {/* =====================================================
           HERO CONTENT

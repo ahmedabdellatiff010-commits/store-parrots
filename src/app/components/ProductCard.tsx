@@ -261,7 +261,7 @@ export default function ProductCard({
 
           <motion.span
             dir="ltr"
-            className="shrink-0 whitespace-nowrap text-[12px] font-semibold tracking-tight text-zinc-900"
+            className="shrink-0 whitespace-nowrap text-[12px] font-semibold tracking-tight text-white"
             whileHover={{
               x: -2,
             }}

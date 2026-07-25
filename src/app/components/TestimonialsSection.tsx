@@ -58,7 +58,7 @@ const itemVariants = {
 
 export default function TestimonialsSection() {
   return (
-    <section id="testimonials" className="bg-gradient-to-b from-black via-[#050712] to-black py-20 sm:py-24 lg:py-32">
+    <section id="testimonials" className="bg-black py-20 sm:py-24 lg:py-32">
       <div className="mx-auto w-full max-w-7xl px-6 sm:px-8 lg:px-10">
         {/* HEADER */}
         <motion.div
@@ -68,7 +68,7 @@ export default function TestimonialsSection() {
           viewport={{ once: true, margin: "-100px" }}
           className="mb-16 text-center"
         >
-          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-cyan-400">
+          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-white/60">
             آراء العملاء
           </p>
           <h2 className="mt-4 text-3xl font-semibold text-white md:text-4xl lg:text-5xl">
@@ -95,7 +95,7 @@ export default function TestimonialsSection() {
                 y: -8,
                 transition: { duration: 0.3 },
               }}
-              className="group relative rounded-[24px] border border-white/10 bg-white/5 p-6 backdrop-blur-xl shadow-[0_20px_60px_rgba(0,0,0,0.25)] transition-all duration-500 hover:border-white/20 hover:bg-white/10 hover:shadow-[0_28px_80px_rgba(0,0,0,0.35)]"
+              className="group relative rounded-[24px] border border-white/20 bg-gradient-to-br from-white/5 to-white/0 p-6 backdrop-blur-xl shadow-[0_20px_60px_rgba(0,0,0,0.25)] transition-all duration-500 hover:border-white/40 hover:shadow-[0_28px_100px_rgba(255,255,255,0.1)]"
             >
               {/* RATING */}
               <div className="mb-4 flex gap-1">
@@ -125,7 +125,7 @@ export default function TestimonialsSection() {
               <div className="flex items-center gap-3">
                 <div className="text-3xl">{testimonial.avatar}</div>
                 <div>
-                  <p className="font-semibold text-white group-hover:text-cyan-300 transition-colors duration-300">
+                  <p className="font-semibold text-white group-hover:text-gray-200 transition-colors duration-300">
                     {testimonial.name}
                   </p>
                   <p className="text-xs text-zinc-400 group-hover:text-zinc-300 transition-colors duration-300">

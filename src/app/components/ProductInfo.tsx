@@ -53,18 +53,18 @@ export default function ProductInfo({ product }: Props) {
   }[];
 
   return (
-    <div className="w-full">
+      <div className="w-full">
       {/* Product Title */}
       <div>
-        <p className="text-xs font-medium text-zinc-500">
+        <p className="text-xs font-medium text-white/60">
           ببغاء مميز
         </p>
 
-        <h1 className="mt-2 text-2xl font-medium tracking-[-0.02em] text-zinc-950 sm:text-3xl">
+        <h1 className="mt-2 text-2xl font-medium tracking-[-0.02em] text-white sm:text-3xl">
           {product.name}
         </h1>
 
-        <p className="mt-2 text-xs text-zinc-400">
+        <p className="mt-2 text-xs text-white/40">
           رقم المنتج: P-{product.id}
         </p>
       </div>
@@ -73,7 +73,7 @@ export default function ProductInfo({ product }: Props) {
       <div className="mt-6">
         <p
           dir="ltr"
-          className="text-2xl font-medium tracking-[-0.02em] text-zinc-950"
+          className="text-2xl font-medium tracking-[-0.02em] text-white"
         >
           {product.price.toLocaleString("en-EG")} ج.م
         </p>
@@ -81,8 +81,8 @@ export default function ProductInfo({ product }: Props) {
 
       {/* Description */}
       {product.description && (
-        <div className="mt-6 border-t border-zinc-200 pt-6">
-          <p className="text-sm leading-7 text-zinc-600">
+        <div className="mt-6 border-t border-white/20 pt-6">
+          <p className="text-sm leading-7 text-white/70">
             {product.description}
           </p>
         </div>
@@ -90,17 +90,17 @@ export default function ProductInfo({ product }: Props) {
 
       {/* Product Details */}
       {infoRows.length > 0 && (
-        <div className="mt-6 border-y border-zinc-200">
+        <div className="mt-6 border-y border-white/20">
           {infoRows.map((row) => (
             <div
               key={row.label}
-              className="flex min-h-[52px] items-center justify-between gap-6 border-b border-zinc-100 last:border-b-0"
+              className="flex min-h-[52px] items-center justify-between gap-6 border-b border-white/10 last:border-b-0"
             >
-              <span className="text-sm text-zinc-500">
+              <span className="text-sm text-white/60">
                 {row.label}
               </span>
 
-              <span className="text-sm font-medium text-zinc-900">
+              <span className="text-sm font-medium text-white">
                 {row.value}
               </span>
             </div>
@@ -110,22 +110,22 @@ export default function ProductInfo({ product }: Props) {
 
       {/* Quantity */}
       <div className="mt-6">
-        <label className="text-sm font-medium text-zinc-900">
+        <label className="text-sm font-medium text-white">
           الكمية
         </label>
 
-        <div className="mt-3 inline-flex h-11 items-center border border-zinc-300">
+        <div className="mt-3 inline-flex h-11 items-center border border-white/20 rounded-[8px]">
           <button
             type="button"
             aria-label="تقليل الكمية"
             onClick={() => changeQty(-1)}
             disabled={quantity <= 1}
-            className="flex h-full w-11 items-center justify-center text-lg text-zinc-600 transition-colors hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-30"
+            className="flex h-full w-11 items-center justify-center text-lg text-white/60 transition-colors hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-30"
           >
             −
           </button>
 
-          <span className="flex h-full w-12 items-center justify-center border-x border-zinc-300 text-sm font-medium text-zinc-900">
+          <span className="flex h-full w-12 items-center justify-center border-x border-white/20 text-sm font-medium text-white">
             {quantity}
           </span>
 
@@ -134,7 +134,7 @@ export default function ProductInfo({ product }: Props) {
             aria-label="زيادة الكمية"
             onClick={() => changeQty(1)}
             disabled={quantity >= maxQuantity}
-            className="flex h-full w-11 items-center justify-center text-lg text-zinc-600 transition-colors hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-30"
+            className="flex h-full w-11 items-center justify-center text-lg text-white/60 transition-colors hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-30"
           >
             +
           </button>
@@ -142,14 +142,14 @@ export default function ProductInfo({ product }: Props) {
       </div>
 
       {/* Order Summary */}
-      <div className="mt-6 flex items-center justify-between border-t border-zinc-200 pt-5">
-        <span className="text-sm text-zinc-500">
+      <div className="mt-6 flex items-center justify-between border-t border-white/20 pt-5">
+        <span className="text-sm text-white/60">
           الإجمالي
         </span>
 
         <span
           dir="ltr"
-          className="text-base font-medium text-zinc-950"
+          className="text-base font-medium text-white"
         >
           {totalPrice.toLocaleString("en-EG")} ج.م
         </span>
@@ -166,7 +166,7 @@ export default function ProductInfo({ product }: Props) {
       </div>
 
       {/* Trust Message */}
-      <p className="mt-4 text-center text-xs leading-5 text-zinc-400">
+      <p className="mt-4 text-center text-xs leading-5 text-white/40">
         تواصل معنا عبر واتساب لتأكيد الطلب ومعرفة التفاصيل.
       </p>
     </div>

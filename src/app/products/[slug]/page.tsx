@@ -18,11 +18,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
   }
 
   return (
-    <main className="min-h-screen bg-[#fcfcfa] text-zinc-900">
+    <main className="min-h-screen bg-black text-white">
       <Navbar />
 
       <section className="mx-auto max-w-7xl px-6 py-10 md:px-8 lg:px-10 lg:py-16">
-        <Link href="/" className="text-sm font-semibold text-zinc-600 transition-colors hover:text-zinc-950">
+        <Link href="/" className="text-sm font-semibold text-white/60 transition-colors hover:text-white">
           ← العودة إلى الصفحة الرئيسية
         </Link>
 

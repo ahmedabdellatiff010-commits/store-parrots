@@ -24,23 +24,22 @@ export default function NewsletterSection() {
   };
 
   return (
-    <section id="newsletter" className="bg-gradient-to-r from-[#071118] via-[#020409] to-[#03111b] py-16 sm:py-20">
+    <section id="newsletter" className="bg-black py-16 sm:py-20">
       <div className="mx-auto w-full max-w-7xl px-6 sm:px-8 lg:px-10">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
           viewport={{ once: true, margin: "-100px" }}
-          className="relative overflow-hidden rounded-[40px] border border-white/10 bg-gradient-to-br from-white/5 to-transparent p-8 sm:p-12 shadow-[0_40px_120px_rgba(0,0,0,0.3)]"
+          className="relative overflow-hidden rounded-[40px] border border-white/20 bg-gradient-to-br from-white/5 to-white/0 p-8 sm:p-12 shadow-[0_40px_120px_rgba(0,0,0,0.3)] transition-all duration-500 hover:border-white/40 hover:shadow-[0_40px_150px_rgba(255,255,255,0.1)]"
         >
-          {/* DECORATIVE ELEMENTS */}
-          <div className="absolute -right-20 -top-20 h-40 w-40 rounded-full bg-cyan-500/10 blur-3xl" />
-          <div className="absolute -left-20 -bottom-20 h-40 w-40 rounded-full bg-emerald-500/10 blur-3xl" />
+          {/* DECORATIVE ELEMENTS - REMOVED */}
+          {/* Removed gradient blur elements for cleaner look */}
 
           <div className="relative z-10">
             {/* HEADER */}
             <div className="mb-6 max-w-2xl">
-              <p className="text-sm font-semibold uppercase tracking-[0.3em] text-cyan-400">
+              <p className="text-sm font-semibold uppercase tracking-[0.3em] text-white/60">
                 ابقَ على تواصل
               </p>
               <h2 className="mt-2 text-3xl font-semibold text-white sm:text-4xl">
@@ -68,7 +67,7 @@ export default function NewsletterSection() {
                 required
                 disabled={isLoading}
                 whileFocus={{ scale: 1.02 }}
-                className="flex-1 rounded-full border border-white/20 bg-white/10 px-6 py-3 text-white placeholder:text-zinc-400 transition-all duration-300 focus:border-cyan-400/50 focus:bg-white/15 focus:outline-none disabled:opacity-50"
+                className="flex-1 rounded-full border border-white/20 bg-black px-6 py-3 text-white placeholder:text-zinc-500 transition-all duration-300 focus:border-white/40 focus:outline-none disabled:opacity-50 focus:shadow-[0_0_20px_rgba(255,255,255,0.1)]"
               />
 
               <motion.button
@@ -78,8 +77,8 @@ export default function NewsletterSection() {
                 whileTap={{ scale: isSubmitted ? 1 : 0.95 }}
                 className={`relative rounded-full px-8 py-3 font-semibold transition-all duration-300 ${
                   isSubmitted
-                    ? "border border-emerald-400/50 bg-emerald-500/20 text-emerald-300"
-                    : "border border-cyan-400 bg-cyan-500 text-white hover:border-cyan-300 hover:bg-cyan-600"
+                    ? "border border-white/30 bg-black text-white"
+                    : "border border-white/40 bg-white text-black hover:border-white/60 hover:bg-gray-100 hover:shadow-[0_0_20px_rgba(255,255,255,0.2)]"
                 }`}
               >
                 {isLoading ? (

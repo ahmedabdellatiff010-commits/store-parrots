@@ -4,7 +4,7 @@ const WHATSAPP_NUMBER = "201063735899";
 
 export default function Footer() {
   return (
-    <footer dir="rtl" className="bg-zinc-950 text-white">
+    <footer dir="rtl" className="bg-black text-white">
       {/* Main Footer */}
       <div className="mx-auto max-w-[1440px] px-5 py-14 sm:px-8 lg:px-10 lg:py-20">
         <div className="grid gap-12 lg:grid-cols-[1.5fr_1fr_1fr_1.2fr] lg:gap-16">
@@ -23,13 +23,13 @@ export default function Footer() {
                   نوادر
                 </span>
 
-                <span className="text-xs leading-5 text-zinc-400">
+                <span className="text-xs leading-5 text-white/60">
                   الببغاوات
                 </span>
               </span>
             </Link>
 
-            <p className="mt-6 max-w-sm text-sm leading-7 text-zinc-400">
+            <p className="mt-6 max-w-sm text-sm leading-7 text-white/70">
               نوفر لك مجموعة مميزة من الببغاوات المختارة بعناية،
               مع الاهتمام بصحة الطائر وجودته لتجد صديقك المناسب.
             </p>
@@ -39,7 +39,7 @@ export default function Footer() {
               href={`https://wa.me/${WHATSAPP_NUMBER}`}
               target="_blank"
               rel="noreferrer"
-              className="mt-7 inline-flex h-11 items-center gap-2.5 rounded-lg bg-white px-5 text-sm font-semibold text-zinc-950 transition-all duration-200 hover:bg-zinc-200 active:scale-[0.98]"
+              className="mt-7 inline-flex h-11 items-center gap-2.5 rounded-lg bg-white px-5 text-sm font-semibold text-black transition-all duration-200 hover:bg-gray-200 active:scale-[0.98]"
             >
               <svg
                 width="18"
@@ -64,28 +64,28 @@ export default function Footer() {
             <nav className="mt-5 flex flex-col gap-4">
               <Link
                 href="/"
-                className="w-fit text-sm text-zinc-400 transition-colors hover:text-white"
+                className="w-fit text-sm text-white/60 transition-colors hover:text-white"
               >
                 الرئيسية
               </Link>
 
               <Link
                 href="#featured"
-                className="w-fit text-sm text-zinc-400 transition-colors hover:text-white"
+                className="w-fit text-sm text-white/60 transition-colors hover:text-white"
               >
                 الببغاوات المميزة
               </Link>
 
               <Link
                 href="/types"
-                className="w-fit text-sm text-zinc-400 transition-colors hover:text-white"
+                className="w-fit text-sm text-white/60 transition-colors hover:text-white"
               >
                 أنواع الببغاوات
               </Link>
 
               <Link
                 href="#categories"
-                className="w-fit text-sm text-zinc-400 transition-colors hover:text-white"
+                className="w-fit text-sm text-white/60 transition-colors hover:text-white"
               >
                 التصنيفات
               </Link>
@@ -101,7 +101,7 @@ export default function Footer() {
             <nav className="mt-5 flex flex-col gap-4">
               <Link
                 href="#cta"
-                className="w-fit text-sm text-zinc-400 transition-colors hover:text-white"
+                className="w-fit text-sm text-white/60 transition-colors hover:text-white"
               >
                 تواصل معنا
               </Link>
@@ -110,14 +110,14 @@ export default function Footer() {
                 href={`https://wa.me/${WHATSAPP_NUMBER}`}
                 target="_blank"
                 rel="noreferrer"
-                className="w-fit text-sm text-zinc-400 transition-colors hover:text-white"
+                className="w-fit text-sm text-white/60 transition-colors hover:text-white"
               >
                 الطلب عبر واتساب
               </a>
 
               <Link
                 href="/"
-                className="w-fit text-sm text-zinc-400 transition-colors hover:text-white"
+                className="w-fit text-sm text-white/60 transition-colors hover:text-white"
               >
                 كيفية الطلب
               </Link>
@@ -130,7 +130,7 @@ export default function Footer() {
               هل تبحث عن ببغاء معين؟
             </h3>
 
-            <p className="mt-4 text-sm leading-7 text-zinc-400">
+            <p className="mt-4 text-sm leading-7 text-white/70">
               تواصل معنا وسنساعدك في العثور على الببغاء
               المناسب لك.
             </p>
@@ -139,7 +139,7 @@ export default function Footer() {
               href={`https://wa.me/${WHATSAPP_NUMBER}`}
               target="_blank"
               rel="noreferrer"
-              className="mt-6 flex h-11 w-full items-center justify-center rounded-lg border border-zinc-700 text-sm font-medium text-white transition-colors duration-200 hover:border-white hover:bg-white hover:text-zinc-950"
+              className="mt-6 flex h-11 w-full items-center justify-center rounded-lg border border-white/20 text-sm font-medium text-white transition-colors duration-200 hover:border-white/40 hover:bg-white/10"
             >
               تحدث معنا
             </a>
@@ -148,8 +148,8 @@ export default function Footer() {
       </div>
 
       {/* Bottom Bar */}
-      <div className="border-t border-zinc-800">
-        <div className="mx-auto flex max-w-[1440px] flex-col gap-3 px-5 py-5 text-xs text-zinc-500 sm:px-8 md:flex-row md:items-center md:justify-between lg:px-10">
+      <div className="border-t border-white/20">
+        <div className="mx-auto flex max-w-[1440px] flex-col gap-3 px-5 py-5 text-xs text-white/60 sm:px-8 md:flex-row md:items-center md:justify-between lg:px-10">
           <p>
             © {new Date().getFullYear()} نوادر الببغاوات. جميع الحقوق محفوظة.
           </p>
@@ -157,7 +157,7 @@ export default function Footer() {
           <div className="flex items-center gap-5">
             <span>صنع بحب في مصر</span>
 
-            <span className="h-1 w-1 rounded-full bg-zinc-700" />
+            <span className="h-1 w-1 rounded-full bg-white/20" />
 
             <span>متجر الببغاوات المميز</span>
           </div>

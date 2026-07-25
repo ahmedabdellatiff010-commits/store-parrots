@@ -35,7 +35,7 @@ export default function WhatsAppButton({
       type="button"
       onClick={handleClick}
       disabled={disabled}
-      className={`relative z-10 inline-flex min-h-12 touch-manipulation items-center justify-center gap-3 rounded-lg border border-zinc-300 bg-zinc-900 px-5 py-3 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-zinc-800 active:scale-95 disabled:cursor-not-allowed disabled:bg-zinc-400 ${className}`.trim()}
+      className={`relative z-10 inline-flex min-h-12 touch-manipulation items-center justify-center gap-3 rounded-lg border border-white/20 bg-gradient-to-br from-white/5 to-white/0 px-5 py-3 text-sm font-semibold text-white shadow-[0_10px_30px_rgba(255,255,255,0.1)] transition-all duration-200 hover:border-white/40 hover:shadow-[0_15px_40px_rgba(255,255,255,0.15)] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 ${className}`.trim()}
     >
       <svg
         width="18"

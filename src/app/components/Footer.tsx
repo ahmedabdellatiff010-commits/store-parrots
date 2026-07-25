@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-const WHATSAPP_NUMBER = "201063735899";
+const WHATSAPP_NUMBER = "01111074774";
 
 const exploreLinks = [
   {

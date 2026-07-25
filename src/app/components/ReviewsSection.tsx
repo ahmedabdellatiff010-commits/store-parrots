@@ -84,7 +84,7 @@ export default function ReviewsSection() {
               index === reviews.length - 1
                 ? "md:pl-0"
                 : ""
-            }`}}
+            }`}
           >
             {/* Stars */}
             <div className="flex items-center gap-1">

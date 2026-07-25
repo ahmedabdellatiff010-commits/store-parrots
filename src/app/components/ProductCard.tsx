@@ -1,86 +1,314 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import type { Product } from "@/app/types/product";
 
 type ProductCardProps = {
   product: Product;
 };
 
+const cardVariants = {
+  hidden: {
+    opacity: 0,
+    y: 24,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.7,
+      ease: [0.22, 1, 0.36, 1],
+    },
+  },
+};
+
 export default function ProductCard({
   product,
 }: ProductCardProps) {
+  const primaryImage = product.images?.[0];
+  const secondaryImage = product.images?.[1];
+
   return (
-    <article className="group w-full">
-      {/* Product Image */}
+    <motion.article
+      variants={cardVariants}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{
+        once: true,
+        amount: 0.15,
+      }}
+      whileHover={{
+        y: -4,
+      }}
+      transition={{
+        duration: 0.45,
+        ease: [0.22, 1, 0.36, 1],
+      }}
+      className="group w-full"
+    >
+      {/* =====================================================
+          IMAGE
+      ====================================================== */}
+
       <Link
         href={`/products/${product.slug}`}
-        className="relative block aspect-[4/4.6] overflow-hidden bg-zinc-100"
         aria-label={`عرض ${product.name}`}
+        className="relative block aspect-[4/4.8] overflow-hidden bg-zinc-100"
       >
-        {product.images?.[0] ? (
-          <Image
-            src={product.images[0]}
-            alt={product.name}
-            fill
-            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 20vw"
-            className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
-          />
+        {primaryImage ? (
+          <>
+            {/* =================================================
+                PRIMARY IMAGE
+            ================================================== */}
+
+            <motion.div
+              className="absolute inset-0"
+              initial={{ scale: 1 }}
+              whileHover={{ scale: secondaryImage ? 1.025 : 1.045 }}
+              transition={{
+                duration: 0.9,
+                ease: [0.22, 1, 0.36, 1],
+              }}
+            >
+              <Image
+                src={primaryImage}
+                alt={product.name}
+                fill
+                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 20vw"
+                className={`object-cover transition-opacity duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                  secondaryImage
+                    ? "group-hover:opacity-0"
+                    : "group-hover:opacity-100"
+                }`}
+              />
+            </motion.div>
+
+            {/* =================================================
+                SECONDARY IMAGE
+            ================================================== */}
+
+            {secondaryImage && (
+              <motion.div
+                className="absolute inset-0"
+                initial={{
+                  opacity: 0,
+                  scale: 1.03,
+                }}
+                whileHover={{
+                  opacity: 1,
+                  scale: 1,
+                }}
+                transition={{
+                  opacity: {
+                    duration: 0.65,
+                    ease: "easeOut",
+                  },
+                  scale: {
+                    duration: 0.9,
+                    ease: [0.22, 1, 0.36, 1],
+                  },
+                }}
+              >
+                <Image
+                  src={secondaryImage}
+                  alt={`${product.name} - صورة إضافية`}
+                  fill
+                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 20vw"
+                  className="object-cover"
+                />
+              </motion.div>
+            )}
+
+            {/* =================================================
+                SUBTLE IMAGE OVERLAY
+            ================================================== */}
+
+            <motion.div
+              className="pointer-events-none absolute inset-0 bg-black"
+              initial={{
+                opacity: 0,
+              }}
+              whileHover={{
+                opacity: 0.06,
+              }}
+              transition={{
+                duration: 0.5,
+                ease: "easeOut",
+              }}
+            />
+
+            {/* =================================================
+                VIEW DETAILS BUTTON
+            ================================================== */}
+
+            <motion.div
+              initial={{
+                opacity: 0,
+                y: 18,
+              }}
+              whileHover={{
+                opacity: 1,
+                y: 0,
+              }}
+              transition={{
+                duration: 0.45,
+                ease: [0.22, 1, 0.36, 1],
+              }}
+              className="absolute inset-x-4 bottom-4"
+            >
+              <div className="flex h-11 w-full items-center justify-center bg-white text-[10px] font-semibold text-zinc-950 shadow-[0_8px_30px_rgba(0,0,0,0.12)] transition-colors duration-300 hover:bg-zinc-950 hover:text-white">
+                <span>عرض التفاصيل</span>
+
+                <motion.svg
+                  width="15"
+                  height="15"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  initial={{
+                    x: 0,
+                    opacity: 0.6,
+                  }}
+                  whileHover={{
+                    x: -4,
+                    opacity: 1,
+                  }}
+                  transition={{
+                    duration: 0.3,
+                  }}
+                  className="mr-2"
+                >
+                  <path d="M5 12h14" />
+                  <path d="m13 6 6 6-6 6" />
+                </motion.svg>
+              </div>
+            </motion.div>
+          </>
         ) : (
-          <div className="absolute inset-0 flex items-center justify-center bg-zinc-100">
+          /* =================================================
+              EMPTY IMAGE
+          ================================================== */
+
+          <motion.div
+            className="absolute inset-0 flex items-center justify-center bg-zinc-100"
+            whileHover={{
+              backgroundColor: "#f4f4f5",
+            }}
+          >
             <span className="text-[10px] text-zinc-400">
               لا توجد صورة
             </span>
-          </div>
+          </motion.div>
         )}
       </Link>
 
-      {/* Product Info */}
-      <div className="pt-3">
-        {/* Name + Price */}
-        <div className="flex items-start justify-between gap-2">
+      {/* =====================================================
+          PRODUCT INFORMATION
+      ====================================================== */}
+
+      <motion.div
+        className="pt-4"
+        initial={{
+          opacity: 0.85,
+        }}
+        whileHover={{
+          opacity: 1,
+        }}
+        transition={{
+          duration: 0.35,
+        }}
+      >
+        {/* =================================================
+            NAME + PRICE
+        ================================================== */}
+
+        <div className="flex items-start justify-between gap-4">
+          {/* NAME */}
+
           <div className="min-w-0">
-            <Link href={`/products/${product.slug}`}>
-              <h3 className="truncate text-[13px] font-medium leading-5 text-zinc-900 transition-colors group-hover:text-zinc-500">
+            <Link
+              href={`/products/${product.slug}`}
+              className="block max-w-full"
+            >
+              <motion.h3
+                className="truncate text-[13px] font-medium leading-5 text-zinc-100"
+                whileHover={{
+                  x: -2,
+                }}
+                transition={{
+                  duration: 0.3,
+                  ease: "easeOut",
+                }}
+              >
                 {product.name}
-              </h3>
+              </motion.h3>
             </Link>
 
+            {/* TEMPERAMENT */}
+
             {product.temperament && (
-              <p className="mt-0.5 truncate text-[10px] text-zinc-500">
+              <p className="mt-1 truncate text-[10px] leading-4 text-zinc-500">
                 {product.temperament}
               </p>
             )}
           </div>
 
-          <span
+          {/* PRICE */}
+
+          <motion.span
             dir="ltr"
-            className="shrink-0 text-[12px] font-medium text-zinc-900"
+            className="shrink-0 whitespace-nowrap text-[12px] font-semibold tracking-tight text-zinc-900"
+            whileHover={{
+              x: -2,
+            }}
+            transition={{
+              duration: 0.3,
+            }}
           >
             {product.price.toLocaleString("en-EG")} ج
-          </span>
+          </motion.span>
         </div>
 
-        {/* Small Meta */}
+        {/* =================================================
+            META
+        ================================================== */}
+
         {(product.expectedAge || product.size) && (
-          <div className="mt-2 flex items-center gap-3 text-[9px] text-zinc-400">
+          <motion.div
+            className="mt-3 flex items-center gap-3 text-[9px] text-zinc-400"
+            initial={{
+              opacity: 0.7,
+            }}
+            whileHover={{
+              opacity: 1,
+            }}
+            transition={{
+              duration: 0.3,
+            }}
+          >
             {product.expectedAge && (
-              <span>العمر {product.expectedAge}</span>
+              <span className="whitespace-nowrap">
+                العمر {product.expectedAge}
+              </span>
+            )}
+
+            {product.expectedAge && product.size && (
+              <span className="h-2.5 w-px bg-zinc-200" />
             )}
 
             {product.size && (
-              <span>الحجم {product.size}</span>
+              <span className="whitespace-nowrap">
+                الحجم {product.size}
+              </span>
             )}
-          </div>
+          </motion.div>
         )}
-
-        {/* Details */}
-        <Link
-          href={`/products/${product.slug}`}
-          className="mt-3 flex h-9 w-full items-center justify-center border border-zinc-200 text-[10px] font-medium text-zinc-800 transition-all duration-200 hover:border-zinc-900 hover:bg-zinc-900 hover:text-white"
-        >
-          عرض التفاصيل
-        </Link>
-      </div>
-    </article>
+      </motion.div>
+    </motion.article>
   );
 }

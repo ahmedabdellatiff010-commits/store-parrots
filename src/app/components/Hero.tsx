@@ -1,481 +1,196 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-
-const slides = [
-  {
-    image: "/birds/macaw.jpg",
-    tag: "نوادر الببغاوات",
-    title: "امتلك ببغاءك المفضل",
-    highlight: "بأفضل صحة وأفضل تدريب",
-    description:
-      "نوفر لك أجمل أنواع الببغاوات بعناية فائقة وجودة مضمونة لتجد صديقك المثالي.",
-  },
-  {
-    image: "/birds/macaw.jpg",
-    tag: "اختيارات مميزة",
-    title: "اكتشف عالم الببغاوات",
-    highlight: "واختر صديقك المفضل",
-    description:
-      "أنواع مميزة وصحية تم اختيارها بعناية لتكون جزءًا مميزًا من عائلتك.",
-  },
-  {
-    image: "/birds/macaw.jpg",
-    tag: "رعاية وجودة",
-    title: "ببغاؤك يستحق الأفضل",
-    highlight: "من أول لحظة",
-    description:
-      "نهتم بكل التفاصيل لنقدم لك تجربة مختلفة في اختيار وامتلاك ببغائك.",
-  },
-];
-
-const SLIDE_DURATION = 7000;
+import { motion } from "framer-motion";
 
 export default function Hero() {
-  const [current, setCurrent] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
-
-  const slide = slides[current];
-
-  useEffect(() => {
-    if (isPaused) return;
-
-    const interval = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % slides.length);
-    }, SLIDE_DURATION);
-
-    return () => clearInterval(interval);
-  }, [isPaused]);
-
-  const goToSlide = (index: number) => {
-    setCurrent(index);
-  };
-
-  const nextSlide = () => {
-    setCurrent((prev) => (prev + 1) % slides.length);
-  };
-
-  const previousSlide = () => {
-    setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
-  };
-
   return (
     <section
       dir="rtl"
-      className="relative w-full overflow-hidden bg-black"
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
+      className="relative isolate h-[100vh] min-h-[100vh] w-full overflow-hidden bg-black"
     >
-      {/* =========================
-          BACKGROUND IMAGE
-      ========================== */}
-      <div className="absolute inset-0">
-        <Image
-          key={`hero-image-${current}`}
-          src={slide.image}
-          alt={slide.title}
-          fill
-          priority={current === 0}
-          sizes="100vw"
-          className="hero-background object-cover"
-        />
+      {/* =====================================================
+          BACKGROUND VIDEO
+      ====================================================== */}
 
-        {/* Black Transparent Overlay */}
-        <div className="absolute inset-0 bg-black/55" />
+      <video
+        className="absolute inset-0 z-0 h-full w-full object-cover"
+        src="/videos/hero.mp4"
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="auto"
+        aria-hidden="true"
+      />
 
-        {/* Subtle Side Gradient */}
-        <div className="absolute inset-0 bg-gradient-to-l from-black/40 via-transparent to-black/20" />
-      </div>
+      {/* =====================================================
+          VIDEO OVERLAY
+      ====================================================== */}
 
-      {/* =========================
-          DESKTOP HERO
-      ========================== */}
-      <div className="relative hidden min-h-[calc(100vh-72px)] lg:flex">
-        <div className="mx-auto flex w-full max-w-[1440px] items-center px-10 xl:px-16 2xl:px-20">
-          <div
-            key={`desktop-content-${current}`}
-            className="hero-content max-w-[570px] text-right text-white"
+      <div className="pointer-events-none absolute inset-0 z-10 bg-black/45" />
+
+      <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-b from-black/40 via-black/10 to-black/75" />
+
+      <div className="pointer-events-none absolute right-[-7rem] top-1/4 z-5 h-[26rem] w-[26rem] rounded-full bg-cyan-500/10 blur-3xl" />
+      <div className="pointer-events-none absolute left-[-6rem] top-2/3 z-5 h-[24rem] w-[24rem] rounded-full bg-emerald-500/10 blur-3xl" />
+
+      {/* =====================================================
+          HERO CONTENT
+      ====================================================== */}
+
+      <div className="relative z-20 flex h-full w-full items-center justify-center px-5 sm:px-8">
+        <div className="flex w-full max-w-4xl flex-col items-center text-center text-white">
+          {/* =================================================
+              SMALL LABEL
+          ================================================== */}
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{
+              duration: 0.7,
+              delay: 0.2,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+            className="mb-6 flex items-center gap-3 sm:mb-8"
           >
-            {/* Tag */}
-            <div className="hero-tag mb-5 flex items-center gap-2.5 text-sm font-medium text-white/70">
-              <span
-                className="h-2 w-2 rounded-full"
-                style={{ backgroundColor: "var(--accent)" }}
-              />
+            <span className="h-px w-7 bg-white/50 sm:w-10" />
 
-              <span>{slide.tag}</span>
-            </div>
+            <span className="text-[10px] font-medium tracking-[0.3em] text-white/75 sm:text-xs">
+              نوادر الببغاوات
+            </span>
 
-            {/* Title */}
-            <h1 className="hero-title text-4xl font-bold leading-[1.25] tracking-[-0.035em] text-white xl:text-5xl 2xl:text-6xl">
-              {slide.title}
-            </h1>
+            <span className="h-px w-7 bg-white/50 sm:w-10" />
+          </motion.div>
 
-            {/* Highlight */}
-            <h2 className="hero-highlight mt-3 text-2xl font-bold leading-[1.35] tracking-[-0.025em] text-white/80 xl:text-3xl">
-              {slide.highlight}
-            </h2>
+          {/* =================================================
+              MAIN TITLE
+          ================================================== */}
 
-            {/* Description */}
-            <p className="hero-description mt-5 max-w-[500px] text-sm leading-7 text-white/65 xl:text-base xl:leading-8">
-              {slide.description}
-            </p>
+          <motion.h1
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{
+              duration: 0.9,
+              delay: 0.35,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+            className="text-4xl font-semibold leading-[1.2] tracking-[-0.04em] sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl"
+          >
+            امتلك ببغاءك
+            <br />
+            <span className="text-white/75">المفضل</span>
+          </motion.h1>
 
-            {/* Actions */}
-            <div className="hero-actions mt-7 flex items-center gap-3">
-              <Link
-                href="/types"
-                className="inline-flex h-11 items-center justify-center rounded-lg bg-white px-6 text-sm font-bold text-zinc-950 transition-all duration-200 hover:bg-white/90 active:scale-[0.98]"
-              >
-                تصفح الأنواع
-              </Link>
+          {/* =================================================
+              DESCRIPTION
+          ================================================== */}
 
-              <Link
-                href="#featured"
-                className="inline-flex h-11 items-center justify-center rounded-lg border border-white/25 bg-white/5 px-6 text-sm font-semibold text-white backdrop-blur-sm transition-all duration-200 hover:bg-white/10 active:scale-[0.98]"
-              >
-                اكتشف المزيد
-              </Link>
-            </div>
-          </div>
-        </div>
+          <motion.p
+            initial={{ opacity: 0, y: 25 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{
+              duration: 0.8,
+              delay: 0.6,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+            className="mt-6 max-w-xl text-sm leading-7 text-white/70 sm:mt-7 sm:text-base sm:leading-8"
+          >
+            اكتشف مجموعة مميزة من الببغاوات المختارة بعناية،
+            <br className="hidden sm:block" />
+            واختر صديقك الجديد ليكون جزءًا من حياتك.
+          </motion.p>
 
-        {/* =========================
-            DESKTOP CONTROLS
-        ========================== */}
-        <div className="absolute bottom-10 left-10 right-10 flex items-center justify-between xl:left-16 xl:right-16 2xl:left-20 2xl:right-20">
-          {/* Slide Progress */}
-          <div className="flex items-center gap-2">
-            {slides.map((_, index) => (
-              <button
-                key={index}
-                type="button"
-                aria-label={`الانتقال إلى الشريحة ${index + 1}`}
-                aria-current={current === index}
-                onClick={() => goToSlide(index)}
-                className={`relative h-1 overflow-hidden rounded-full transition-all duration-300 ${
-                  current === index
-                    ? "w-12 bg-white/30"
-                    : "w-2 bg-white/30 hover:bg-white/50"
-                }`}
-              >
-                {current === index && !isPaused && (
-                  <span className="hero-progress absolute inset-0 origin-right bg-white" />
-                )}
-              </button>
-            ))}
-          </div>
+          {/* =================================================
+              BUTTONS
+          ================================================== */}
 
-          {/* Arrows */}
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={nextSlide}
-              aria-label="الشريحة التالية"
-              className="flex h-10 w-10 items-center justify-center rounded-lg border border-white/20 bg-white/5 text-white backdrop-blur-sm transition-all duration-200 hover:bg-white/15 active:scale-95"
-            >
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="m9 18 6-6-6-6" />
-              </svg>
-            </button>
+          <motion.div
+            initial={{ opacity: 0, y: 25 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{
+              duration: 0.8,
+              delay: 0.85,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+            className="mt-8 flex flex-col items-center gap-3 sm:mt-10 sm:flex-row"
+          >
+            {/* PRIMARY BUTTON */}
 
-            <button
-              type="button"
-              onClick={previousSlide}
-              aria-label="الشريحة السابقة"
-              className="flex h-10 w-10 items-center justify-center rounded-lg border border-white/20 bg-white/5 text-white backdrop-blur-sm transition-all duration-200 hover:bg-white/15 active:scale-95"
-            >
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="m15 18-6-6 6-6" />
-              </svg>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* =========================
-          MOBILE / TABLET
-      ========================== */}
-      <div className="relative flex min-h-[calc(100svh-72px)] items-end lg:hidden">
-        <div
-          key={`mobile-content-${current}`}
-          className="hero-mobile-content w-full px-5 pb-8 pt-32 sm:px-8 sm:pb-10"
-        >
-          {/* Tag */}
-          <div className="hero-tag mb-4 flex items-center gap-2 text-xs font-medium text-white/70">
-            <span
-              className="h-2 w-2 rounded-full"
-              style={{ backgroundColor: "var(--accent)" }}
-            />
-
-            <span>{slide.tag}</span>
-          </div>
-
-          {/* Title */}
-          <h1 className="hero-title text-3xl font-bold leading-[1.25] tracking-[-0.035em] text-white sm:text-4xl">
-            {slide.title}
-          </h1>
-
-          {/* Highlight */}
-          <h2 className="hero-highlight mt-2 text-xl font-bold leading-[1.35] text-white/80 sm:text-2xl">
-            {slide.highlight}
-          </h2>
-
-          {/* Description */}
-          <p className="hero-description mt-4 max-w-xl text-sm leading-7 text-white/65">
-            {slide.description}
-          </p>
-
-          {/* Actions */}
-          <div className="hero-actions mt-6 grid grid-cols-2 gap-2.5">
             <Link
               href="/types"
-              className="flex h-11 items-center justify-center rounded-lg bg-white px-4 text-xs font-bold text-zinc-950 transition-all duration-200 active:scale-[0.98]"
+              className="group relative flex h-14 min-w-[190px] items-center justify-center overflow-hidden bg-white px-8 text-sm font-semibold text-black transition-transform duration-300 hover:scale-[1.03] active:scale-95"
             >
-              تصفح الأنواع
+              <span className="absolute inset-0 translate-y-full bg-black transition-transform duration-500 ease-out group-hover:translate-y-0" />
+
+              <span className="relative z-10 flex items-center transition-colors duration-500 group-hover:text-white">
+                <span>تسوق الآن</span>
+
+                <svg
+                  className="mr-3 transition-transform duration-300 group-hover:-translate-x-1"
+                  width="17"
+                  height="17"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.7"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M5 12h14" />
+                  <path d="m13 6 6 6-6 6" />
+                </svg>
+              </span>
             </Link>
+
+            {/* SECONDARY BUTTON */}
 
             <Link
-              href="#featured"
-              className="flex h-11 items-center justify-center rounded-lg border border-white/25 bg-white/5 px-4 text-xs font-semibold text-white backdrop-blur-sm transition-all duration-200 active:scale-[0.98]"
+              href="/types"
+              className="flex h-14 min-w-[160px] items-center justify-center border border-white/30 bg-black/10 px-8 text-sm font-medium text-white backdrop-blur-sm transition-all duration-300 hover:border-white/60 hover:bg-white/10 active:scale-95"
             >
-              اكتشف المزيد
+              اكتشف الأنواع
             </Link>
-          </div>
+          </motion.div>
 
-          {/* Mobile Controls */}
-          <div className="mt-7 flex items-center justify-between">
-            {/* Progress */}
-            <div className="flex items-center gap-2">
-              {slides.map((_, index) => (
-                <button
-                  key={index}
-                  type="button"
-                  aria-label={`الانتقال إلى الشريحة ${index + 1}`}
-                  aria-current={current === index}
-                  onClick={() => goToSlide(index)}
-                  className={`relative h-1 overflow-hidden rounded-full transition-all duration-300 ${
-                    current === index
-                      ? "w-10 bg-white/30"
-                      : "w-2 bg-white/30"
-                  }`}
-                >
-                  {current === index && !isPaused && (
-                    <span className="hero-progress absolute inset-0 origin-right bg-white" />
-                  )}
-                </button>
-              ))}
-            </div>
-
-            {/* Arrows */}
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={nextSlide}
-                aria-label="الشريحة التالية"
-                className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/20 bg-white/5 text-white backdrop-blur-sm"
-              >
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.8"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="m9 18 6-6-6-6" />
-                </svg>
-              </button>
-
-              <button
-                type="button"
-                onClick={previousSlide}
-                aria-label="الشريحة السابقة"
-                className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/20 bg-white/5 text-white backdrop-blur-sm"
-              >
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.8"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="m15 18-6-6 6-6" />
-                </svg>
-              </button>
-            </div>
-          </div>
         </div>
       </div>
 
-      {/* =========================
-          ANIMATIONS
-      ========================== */}
-      <style jsx>{`
-        @keyframes heroBackground {
-          from {
-            opacity: 0;
-            transform: scale(1.06);
-          }
+      {/* =====================================================
+          SCROLL INDICATOR
+      ====================================================== */}
 
-          to {
-            opacity: 1;
-            transform: scale(1);
-          }
-        }
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{
+          duration: 0.8,
+          delay: 1.4,
+        }}
+        className="absolute bottom-7 left-1/2 z-20 -translate-x-1/2"
+      >
+        <div className="flex flex-col items-center gap-3">
+          <span className="text-[8px] font-medium tracking-[0.3em] text-white/50">
+            SCROLL
+          </span>
 
-        @keyframes contentFromRight {
-          from {
-            opacity: 0;
-            transform: translateX(100px);
-          }
-
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
-        }
-
-        @keyframes tagReveal {
-          from {
-            opacity: 0;
-            transform: translateX(35px);
-          }
-
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
-        }
-
-        @keyframes titleReveal {
-          from {
-            opacity: 0;
-            transform: translateX(45px);
-          }
-
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
-        }
-
-        @keyframes highlightReveal {
-          from {
-            opacity: 0;
-            transform: translateX(35px);
-          }
-
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
-        }
-
-        @keyframes descriptionReveal {
-          from {
-            opacity: 0;
-            transform: translateX(25px);
-          }
-
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
-        }
-
-        @keyframes buttonsReveal {
-          from {
-            opacity: 0;
-            transform: translateY(25px);
-          }
-
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        @keyframes progress {
-          from {
-            transform: scaleX(0);
-          }
-
-          to {
-            transform: scaleX(1);
-          }
-        }
-
-        .hero-background {
-          animation: heroBackground 1.2s ease-out both;
-        }
-
-        .hero-content {
-          animation: contentFromRight 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
-        }
-
-        .hero-tag {
-          animation: tagReveal 0.65s 0.15s cubic-bezier(0.22, 1, 0.36, 1) both;
-        }
-
-        .hero-title {
-          animation: titleReveal 0.7s 0.25s cubic-bezier(0.22, 1, 0.36, 1) both;
-        }
-
-        .hero-highlight {
-          animation: highlightReveal 0.7s 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
-        }
-
-        .hero-description {
-          animation: descriptionReveal 0.7s 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
-        }
-
-        .hero-actions {
-          animation: buttonsReveal 0.7s 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
-        }
-
-        .hero-progress {
-          animation: progress ${SLIDE_DURATION}ms linear both;
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-          .hero-background,
-          .hero-content,
-          .hero-tag,
-          .hero-title,
-          .hero-highlight,
-          .hero-description,
-          .hero-actions,
-          .hero-progress {
-            animation: none !important;
-          }
-        }
-      `}</style>
+          <div className="relative h-8 w-px overflow-hidden bg-white/25">
+            <motion.div
+              animate={{
+                y: ["-100%", "300%"],
+              }}
+              transition={{
+                duration: 1.6,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+              className="absolute left-0 top-0 h-1/2 w-full bg-white"
+            />
+          </div>
+        </div>
+      </motion.div>
     </section>
   );
 }

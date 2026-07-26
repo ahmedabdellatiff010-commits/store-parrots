@@ -1,13 +1,35 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import {
   assertSupabaseConfigured,
   supabaseAdmin,
 } from "@/lib/supabase/admin";
+import { getUserFromToken } from "@/lib/auth/admin";
 
 const BUCKET_NAME = "product-images";
 
+async function getAuthenticatedUser() {
+  const cookieStore = await cookies();
+  const adminToken = cookieStore.get("admin_access_token")?.value;
+
+  if (!adminToken) {
+    return null;
+  }
+
+  return getUserFromToken(adminToken);
+}
+
 export async function GET() {
   try {
+    const user = await getAuthenticatedUser();
+
+    if (!user) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
     assertSupabaseConfigured();
 
     const { data, error } = await supabaseAdmin!
@@ -57,6 +79,15 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
+    const user = await getAuthenticatedUser();
+
+    if (!user) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
     assertSupabaseConfigured();
 
     const formData = await request.formData();

@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import {
   assertSupabaseConfigured,
   supabaseAdmin,
 } from "@/lib/supabase/admin";
+import { getUserFromToken } from "@/lib/auth/admin";
 
 type RouteContext = {
   params: Promise<{

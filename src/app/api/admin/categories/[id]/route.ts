@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { cookies } from "next/headers";
 import {
   assertSupabaseConfigured,
   supabaseAdmin,
 } from "@/lib/supabase/admin";
+import { getUserFromToken } from "@/lib/auth/admin";
 
 type Props = {
   params: Promise<{
@@ -12,13 +13,14 @@ type Props = {
 };
 
 async function verifyAdmin() {
-  const supabase = await createClient();
+  const cookieStore = await cookies();
+  const adminToken = cookieStore.get("admin_access_token")?.value;
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  if (!adminToken) {
+    return null;
+  }
 
-  return user;
+  return getUserFromToken(adminToken);
 }
 
 export async function PUT(

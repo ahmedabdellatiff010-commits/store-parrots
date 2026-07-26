@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { cookies } from "next/headers";
+import { getUserFromToken } from "@/lib/auth/admin";
 import { assertSupabaseConfigured, supabaseAdmin } from "@/lib/supabase/admin";
 
 const MAX_FILE_SIZE_BYTES = 100 * 1024 * 1024;
@@ -7,10 +8,9 @@ const ALLOWED_CONTENT_TYPES = ["video/mp4", "video/webm", "video/quicktime"];
 
 export async function POST(req: Request) {
   try {
-    const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const cookieStore = await cookies();
+    const adminToken = cookieStore.get("admin_access_token")?.value;
+    const user = adminToken ? await getUserFromToken(adminToken) : null;
 
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

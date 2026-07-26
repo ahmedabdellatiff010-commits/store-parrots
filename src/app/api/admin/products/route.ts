@@ -3,7 +3,8 @@ import {
   assertSupabaseConfigured,
   supabaseAdmin,
 } from "@/lib/supabase/admin";
-import { createClient } from "@/lib/supabase/server";
+import { getUserFromToken } from "@/lib/auth/admin";
+import { cookies } from "next/headers";
 
 type ProductPayload = {
   id?: string;
@@ -23,13 +24,14 @@ type ProductPayload = {
 };
 
 async function getAuthenticatedUser() {
-  const supabase = await createClient();
+  const cookieStore = await cookies();
+  const adminToken = cookieStore.get("admin_access_token")?.value;
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  if (!adminToken) {
+    return null;
+  }
 
-  return user;
+  return getUserFromToken(adminToken);
 }
 
 export async function GET() {

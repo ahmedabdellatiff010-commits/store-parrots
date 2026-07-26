@@ -6,6 +6,45 @@ import {
 import { getUserFromToken } from "@/lib/auth/admin";
 import { cookies } from "next/headers";
 
+function toUniqueSlug(baseSlug: string) {
+  const clean = baseSlug
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
+
+  return clean || `product-${Date.now()}`;
+}
+
+async function ensureUniqueSlug(baseSlug: string) {
+  const candidate = toUniqueSlug(baseSlug);
+  let slug = candidate;
+  let attempt = 1;
+
+  while (attempt <= 5) {
+    const { data: existing, error } = await supabaseAdmin!
+      .from("products")
+      .select("id")
+      .eq("slug", slug)
+      .maybeSingle();
+
+    if (error) {
+      throw error;
+    }
+
+    if (!existing) {
+      return slug;
+    }
+
+    slug = `${candidate}-${attempt}`;
+    attempt += 1;
+  }
+
+  return `${candidate}-${Date.now()}`;
+}
+
 type ProductPayload = {
   id?: string;
   slug?: string;
@@ -135,15 +174,19 @@ export async function POST(
       images,
     } = body;
 
-    if (!id || !slug || !name) {
+    if (!id || !name) {
       return NextResponse.json(
         {
           error:
-            "id, slug and name are required",
+            "id and name are required",
         },
         { status: 400 }
       );
     }
+
+    const finalSlug = await ensureUniqueSlug(
+      String(slug || name)
+    );
 
     const {
       data: product,
@@ -153,7 +196,7 @@ export async function POST(
         .from("products")
         .insert({
           id,
-          slug,
+          slug: finalSlug,
           name,
           description:
             description || "",
@@ -328,7 +371,9 @@ export async function PATCH(
 
     const updateData = {
       ...(slug !== undefined && {
-        slug,
+        slug: slug
+          ? await ensureUniqueSlug(slug)
+          : undefined,
       }),
 
       ...(name !== undefined && {

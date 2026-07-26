@@ -10,8 +10,6 @@ import {
   useSearchParams,
 } from "next/navigation";
 
-import { createClient } from "@/lib/supabase/client";
-
 export default function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -21,8 +19,6 @@ export default function LoginForm() {
 
   const errorType =
     searchParams.get("error");
-
-  const supabase = createClient();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -52,68 +48,34 @@ export default function LoginForm() {
     setError("");
 
     try {
-      // تسجيل الدخول مباشرة عن طريق Supabase
-      const {
-        data: { user },
-        error: loginError,
-      } =
-        await supabase.auth.signInWithPassword({
-          email: email.trim().toLowerCase(),
-          password,
-        });
+      const response = await fetch(
+        "/api/admin/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: email.trim().toLowerCase(),
+            password,
+            next,
+          }),
+        }
+      );
 
-      if (loginError || !user) {
+      const data = await response.json();
+
+      if (!response.ok) {
         throw new Error(
-          loginError?.message ||
+          data?.error ||
             "البريد الإلكتروني أو كلمة المرور غير صحيحة"
         );
       }
 
-      // التحقق أن الحساب موجود في admins
-      const {
-        data: admin,
-        error: adminError,
-      } = await supabase
-        .from("admins")
-        .select("user_id")
-        .eq("user_id", user.id)
-        .maybeSingle();
+      console.log("LOGIN SUCCESS", data);
 
-      if (adminError) {
-        console.error(
-          "Admin verification error:",
-          adminError
-        );
-
-        await supabase.auth.signOut();
-
-        throw new Error(
-          "تعذر التحقق من صلاحيات الإدارة"
-        );
-      }
-
-      if (!admin) {
-        await supabase.auth.signOut();
-
-        throw new Error(
-          "هذا الحساب ليس لديه صلاحية الدخول للوحة التحكم"
-        );
-      }
-
-      console.log(
-        "LOGIN SUCCESS:",
-        user.email
-      );
-
-      // نعمل refresh عشان Next.js يشوف الـ session الجديدة
       router.refresh();
-
-      // ندخل لوحة التحكم
-      router.replace(
-        next.startsWith("/")
-          ? next
-          : "/admin"
-      );
+      router.replace(data.next || "/admin");
 
     } catch (error) {
       console.error(

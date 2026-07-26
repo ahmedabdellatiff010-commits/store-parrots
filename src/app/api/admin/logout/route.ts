@@ -7,9 +7,21 @@ export async function POST() {
 
     await supabase.auth.signOut();
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       success: true,
     });
+
+    response.cookies.set({
+      name: "admin_access_token",
+      value: "",
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+      path: "/",
+      maxAge: 0,
+    });
+
+    return response;
   } catch (error) {
     console.error("Admin logout error:", error);
 

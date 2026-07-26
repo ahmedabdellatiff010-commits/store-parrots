@@ -1,53 +1,14 @@
-import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { getUserFromToken } from "@/lib/auth/admin";
 
 export async function proxy(request: NextRequest) {
-  let response = NextResponse.next({
+  const response = NextResponse.next({
     request,
   });
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll();
-        },
-
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(
-            ({ name, value }) => {
-              request.cookies.set(
-                name,
-                value
-              );
-            }
-          );
-
-          response = NextResponse.next({
-            request,
-          });
-
-          cookiesToSet.forEach(
-            ({ name, value, options }) => {
-              response.cookies.set(
-                name,
-                value,
-                options
-              );
-            }
-          );
-        },
-      },
-    }
-  );
-
-  // مهم: لازم نطلب المستخدم الحالي من Supabase
-  // عشان الـ session تتحدث تلقائيًا لو محتاجة refresh.
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const adminToken = request.cookies.get(
+    "admin_access_token"
+  )?.value;
 
   const { pathname } = request.nextUrl;
 
@@ -58,6 +19,10 @@ export async function proxy(request: NextRequest) {
 
   // حماية كل صفحات لوحة التحكم
   if (pathname.startsWith("/admin")) {
+    const user = adminToken
+      ? await getUserFromToken(adminToken)
+      : null;
+
     if (!user) {
       const loginUrl = request.nextUrl.clone();
 

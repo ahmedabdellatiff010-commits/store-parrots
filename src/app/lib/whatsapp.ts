@@ -19,7 +19,7 @@ export function createWhatsAppOrderUrl({ product, quantity }: WhatsAppOrderOptio
     "",
     "هل ما زال متاحًا؟",
     "",
-    `رابط المنتج: ${process.env.NEXT_PUBLIC_SITE_URL || "https://example.com"}/products/${product.slug}`,
+    `رابط المنتج: ${process.env.NEXT_PUBLIC_SITE_URL || "https://parrots-nwader.vercel.app"}/products/${product.slug}`,
   ].join("\n");
 
   const encoded = encodeURIComponent(message);
